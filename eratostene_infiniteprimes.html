@@ -645,7 +645,7 @@
       <text x="284" y="166" text-anchor="middle">∞</text>
       <text x="808" y="118" text-anchor="middle">∫</text>
     </svg>
-  <div class="ad-a" aria-hidden="true">Ad space</div>
+  <div class="ad-a" id="adSlotA" aria-hidden="true">Ad space</div>
 
   <div class="content-col">
   <div class="wrap" id="wrap">
@@ -663,8 +663,8 @@
   </div>
 
   <div class="ad-b-wrapper">
-    <div class="ad-top-rect" aria-hidden="true">Ad 300×250</div>
-    <div class="ad-side-small" aria-hidden="true">Ad 320×50</div>
+    <div class="ad-top-rect" id="adSlotTopRect" aria-hidden="true">Ad 300×250</div>
+    <div class="ad-side-small" id="adSlotSideSmall" aria-hidden="true">Ad 160×300</div>
   </div>
 </div>
 
@@ -1141,6 +1141,52 @@
 </script>
 
 <script src="mathemory-audio.js"></script>
+
+<script>
+  // --- pubblicità: ogni annuncio isolato nel proprio iframe, con il proprio atOptions privato.
+  // Il formato Adsterra "highperformanceformat" usa una variabile globale condivisa (atOptions):
+  // con più annunci sulla stessa pagina si sovrascrivono a vicenda se non isolati così.
+  // Il codice del dispositivo "sbagliato" non viene MAI creato nella pagina — evita impression
+  // non valide che romperebbero il rapporto con Adsterra.
+  //
+  // Su mobile la struttura riusa via CSS gli stessi 3 div del desktop (ad-a diventa il banner
+  // in alto, ad-side-small quello in basso, ad-top-rect resta nascosto): qui scelgo per ciascuno
+  // la chiave e le dimensioni giuste in base al dispositivo, invece di avere elementi separati.
+  (function(){
+    const isMobileDevice = window.innerWidth <= 900;
+    const AD_SLOTS_DESKTOP = [
+      { elementId: 'adSlotA',         key: 'a6525e43bef9221ab88fe82913548d2e', width: 160, height: 600 },
+      { elementId: 'adSlotTopRect',   key: '50f98522da8b5e97edc7f610cc39417c', width: 300, height: 250 },
+      { elementId: 'adSlotSideSmall', key: 'e9e96fb4584ea554b462b7eccbf26cba', width: 160, height: 300 },
+    ];
+    const AD_SLOTS_MOBILE = [
+      { elementId: 'adSlotA',         key: 'a2a9c900934d95ac8d859267d025b589', width: 320, height: 50 },
+      { elementId: 'adSlotSideSmall', key: 'fd6daf0ccf42f29bcea4f242a1daa43f', width: 320, height: 50 },
+    ];
+
+    function injectAdIframe(elementId, key, width, height){
+      if (!key) return; // nessun codice ancora inserito per questo slot: resta il placeholder
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.style.width = width + 'px';
+      iframe.style.height = height + 'px';
+      iframe.style.border = 'none';
+      iframe.style.display = 'block';
+      iframe.scrolling = 'no';
+      iframe.srcdoc =
+        '<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body>' +
+        '<script>atOptions={"key":"' + key + '","format":"iframe","height":' + height + ',"width":' + width + ',"params":{}};<\/script>' +
+        '<script src="https://www.highperformanceformat.com/' + key + '/invoke.js"><\/script>' +
+        '</body></html>';
+      el.appendChild(iframe);
+    }
+
+    const slots = isMobileDevice ? AD_SLOTS_MOBILE : AD_SLOTS_DESKTOP;
+    slots.forEach(slot => injectAdIframe(slot.elementId, slot.key, slot.width, slot.height));
+  })();
+</script>
 
 </body>
 </html>
