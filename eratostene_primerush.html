@@ -536,7 +536,7 @@
     }
     .page-shell{ display: none; }
   }
-  /* --- popup di fine gara (Livello 200) --- */
+  /* --- popup di fine gara (Livello 100) --- */
   .modal-overlay{
     display:none;
     position: fixed;
@@ -1272,7 +1272,7 @@
         const elapsed = commitElapsedTime();
         localStorage.setItem(LAST_TIME_KEY, elapsed.toFixed(1));
 
-        if (levelNum >= 200){
+        if (levelNum >= 100){
           playSound('winner');
           // Prime Rush non ha una data di scadenza: il popup compare sempre a ogni run completata
           document.getElementById('finishTotalTime').textContent = (localStorage.getItem(TOTAL_TIME_KEY) || '0') + 's';
