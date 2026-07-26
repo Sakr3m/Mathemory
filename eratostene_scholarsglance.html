@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Sieve — Eratosthenes | Mathemory</title>
-<meta name="description" content="The Sieve: find every prime hidden in the grid and add them up before time runs out. A timed prime numbers game inspired by the Sieve of Eratosthenes.">
-<link rel="canonical" href="https://sakr3m.github.io/Mathemory/eratostene_thesieve.html">
+<title>Eratosthenes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -54,7 +52,7 @@
     font-size: 1.5rem;
     fill: rgba(159, 176, 162, 0.20);
   }
-  .wrap > .title-icon-row, .wrap > .instructions, .wrap > .rank-callout, .wrap > .level-layout{
+  .wrap > .title-icon-row, .wrap > .instructions, .wrap > .rank-callout-spacer, .wrap > .level-layout{
     position: relative;
     z-index: 1;
   }
@@ -64,40 +62,7 @@
     margin: 0 0 0.6rem;
   }
   h1 .accent{ color: var(--yellow); }
-  .rank-callout{
-    position: relative;
-    height: 26.78px; /* stessa altezza di prima, per non spostare griglia/pannello sotto */
-    margin: 0 0 0.9rem;
-  }
-  .rank-badge{
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 409px; height: 40px; /* raddoppiata in larghezza, ×1.5 in altezza rispetto a prima */
-    font-family:'Space Mono', monospace;
-    font-size: 0.935rem;
-    font-weight:700;
-    color: var(--bg);
-    background: var(--circle-color, var(--yellow));
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  .rank-phrase{
-    position: absolute;
-    width: 409px; /* poco sotto il badge, stessa larghezza */
-    text-align: center;
-    font-family:'Space Mono', monospace;
-    font-size: 0.75rem;
-    color: rgba(243,239,228,0.5);
-  }
-  /* quando non c'è ancora un rango sbloccato, badge e descrizione restano nel DOM
-     (con un testo placeholder) solo per riservare lo spazio: così gli elementi sotto
-     non "salgono" quando il rango non c'è, invece di restare al loro posto giusto */
-  .rank-callout.no-rank .rank-badge,
-  .rank-callout.no-rank .rank-phrase{
-    visibility: hidden;
-  }
+  .rank-callout-spacer{ margin: 0 0 0.9rem; }
   .instructions{
     color: var(--ink-dim);
     font-size: 1.14rem;
@@ -115,29 +80,7 @@
   }
   @media (max-width: 1400px){
     .level-layout{ grid-template-columns: 1fr; }
-    /* qui griglia e pannello si impilano: niente spazio a destra della griglia per il
-       badge ingrandito, torna il vecchio badge piccolo in riga sopra la griglia */
-    .rank-callout{
-      position: static;
-      height: auto;
-      display:flex; align-items:baseline; gap: 0.7rem; flex-wrap: nowrap;
-    }
-    .rank-badge{
-      position: static;
-      display:inline-block;
-      width: auto; height: auto;
-      flex-shrink: 0;
-      padding: 0.275rem 0.77rem;
-    }
-    .rank-phrase{
-      position: static;
-      width: auto;
-      flex: 1 1 auto;
-      min-width: 0;
-      text-align: left;
-      font-size: 0.935rem;
-      color: var(--ink-dim);
-    }
+    .dev-skip-btn{ top: 100%; margin-top: 0.7rem; }
   }
 
   .grid{
@@ -153,7 +96,7 @@
     justify-content:center;
     background: var(--bg-panel);
     border: 1px solid var(--rule);
-    border-radius: 10px;
+    border-radius: 6px;
     font-family:'Space Mono', monospace;
     font-weight:700;
     font-size: 1.898rem;
@@ -187,6 +130,10 @@
     transition: stroke-dashoffset 0.35s ease;
   }
   .cell.selected circle{ stroke-dashoffset: 0; }
+  /* meccanica di visibilità a tempo: il numero resta nel DOM (la cella è cliccabile
+     come prima) ma diventa completamente invisibile sullo sfondo della cella stessa,
+     non un'attenuazione parziale — nessuna scappatoia visiva */
+  .cell.number-hidden{ color: transparent; }
 
   .side-panel{ display:flex; flex-direction:column; gap: 1.61rem; }
   .picked-row{
@@ -205,6 +152,7 @@
     background: rgba(232,196,104,0.12);
     border-radius: 6px;
     font-size: 2.185rem;
+    transition: filter 0.2s ease; /* dal livello 35 in poi, il blur cresce/si azzera qui sopra */
   }
   .picked-chip.empty-slot{
     background: transparent;
@@ -249,10 +197,45 @@
     color: var(--ink);
     cursor: not-allowed;
   }
-  .side-panel-wrap{ display:flex; flex-direction:column; position: relative; }
   button.check.error:hover{ background: var(--red); }
 
   .feedback{ font-family:'Space Mono', monospace; font-size: 0.9rem; min-height: 1.4rem; margin: 0; }
+  .side-panel-wrap{ display:flex; flex-direction:column; position: relative; }
+  .dev-skip-btn{
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    font-family:'Space Mono', monospace;
+    font-size: 1rem;
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  .dev-skip-btn:hover{ border-color: var(--yellow); color: var(--yellow); }
+  .sight-btn{
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 0.7rem;
+    padding: 0.75rem;
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+    background: transparent;
+    color: var(--ink-dim);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .sight-btn:hover:not(:disabled){ border-color: var(--yellow); color: var(--yellow); }
+  .sight-btn:disabled{ opacity: 0.4; cursor: not-allowed; }
   .feedback.ok{ color: #9DC48C; }
   .feedback.bad{ color: var(--red); }
 
@@ -440,16 +423,7 @@
     .mobile-icon-btn:active{ background: var(--rule); }
 
     .instructions{ display: none; } /* niente spazio per il paragrafo lungo qui, il titolo basta */
-    .rank-callout{
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      min-height: 0;
-      gap: 0.28rem;
-      margin-bottom: 0.59rem;
-    }
-    .rank-badge{ font-size: 0.528rem; padding: 0.18rem 0.54rem; flex-shrink: 0; }
-    .rank-phrase{ font-size: 0.456rem; width: 100%; text-align: center; margin-top: 0; }
+    .rank-callout-spacer{ margin-bottom: 0.59rem; }
 
     /* niente più colonne fisse: un blocco solo, la griglia occupa tutta la larghezza del contenitore */
     .level-layout{
@@ -468,7 +442,7 @@
     .side-panel{
       display: grid;
       grid-template-columns: 1fr 3.4rem;
-      grid-template-rows: auto auto auto;
+      grid-template-rows: auto auto auto auto;
       column-gap: 0.6rem;
       row-gap: 0.5rem;
       width: 100%;
@@ -479,7 +453,22 @@
     .answer-row input[type="number"]{
       grid-column: 1;
       grid-row: 1;
-      width: 100%;
+      width: calc(50% - 0.3rem);
+      justify-self: start;
+    }
+    .dev-skip-btn{
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: end;
+      position: static;
+      margin-top: 0;
+      width: calc(50% - 0.3rem);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-sizing: border-box;
     }
     .answer-row button.check{
       grid-column: 2;
@@ -495,7 +484,8 @@
       line-height: 1.15;
       text-align: center;
     }
-    .feedback{ grid-column: 1 / 3; grid-row: 3; }
+    .answer-row .sight-btn{ grid-column: 1 / 3; grid-row: 3; margin-top: 0; }
+    .feedback{ grid-column: 1 / 3; grid-row: 4; }
 
     .picked-row{
       position: relative;
@@ -538,7 +528,7 @@
     }
     .page-shell{ display: none; }
   }
-  /* --- popup di fine gara (Livello 200) --- */
+  /* --- popup di fine gara (Livello 100) --- */
   .modal-overlay{
     display:none;
     position: fixed;
@@ -677,6 +667,19 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="devSkipModal">
+  <div class="modal-card" style="position:relative;">
+    <button type="button" id="devSkipCloseBtn" aria-label="Close" style="position:absolute; top:0.7rem; right:0.7rem; width:2rem; height:2rem; border-radius:50%; border:none; background:var(--bg); color:var(--ink); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+    <div class="modal-buttons" style="flex-direction:column;">
+      <button type="button" class="modal-btn yes" id="devSkip1Btn">+1</button>
+      <button type="button" class="modal-btn yes" id="devSkip10Btn">+10</button>
+      <button type="button" class="modal-btn yes" id="devSkip50Btn">50</button>
+      <button type="button" class="modal-btn no" id="devSkipResetBtn">Reset</button>
+    </div>
+  </div>
+</div>
+
+
 <div class="page-shell">
   <svg class="math-constellation" viewBox="0 0 1000 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <text x="848" y="288" text-anchor="middle">π</text>
@@ -735,7 +738,7 @@
       <text x="284" y="166" text-anchor="middle">∞</text>
       <text x="808" y="118" text-anchor="middle">∫</text>
     </svg>
-  <div class="ad-a" id="adSlotA" aria-hidden="true">Ad space</div>
+  <div class="ad-a" aria-hidden="true">Ad space</div>
 
   <div class="content-col">
   <div class="wrap" id="wrap">
@@ -745,7 +748,7 @@
       <a class="mobile-icon-btn" id="homeBtn" href="index.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg></a>
     </div>
     <p class="instructions">Tap every prime you can find. They'll drop into the box on the side to help you add them up. Then write the total.</p>
-    <div class="rank-callout" id="rankCallout"></div>
+    <div class="rank-callout-spacer"></div>
     <div class="level-layout" id="levelLayout">
       <p style="color:var(--ink-dim); font-family:'Space Mono', monospace; font-size:0.85rem;">Loading level…</p>
     </div>
@@ -753,8 +756,8 @@
   </div>
 
   <div class="ad-b-wrapper">
-    <div class="ad-top-rect" id="adSlotTopRect" aria-hidden="true">Ad 300×250</div>
-    <div class="ad-side-small" id="adSlotSideSmall" aria-hidden="true">Ad 160×300</div>
+    <div class="ad-top-rect" aria-hidden="true">Ad 300×250</div>
+    <div class="ad-side-small" aria-hidden="true">Ad 320×50</div>
   </div>
 </div>
 
@@ -825,38 +828,23 @@
 
   const params = new URLSearchParams(window.location.search);
   const levelNum = parseInt(params.get('n')) || 1;
-  const STORAGE_KEY = 'erato_basic_last';
-  const TOTAL_TIME_KEY = 'erato_basic_total_race_time';
-  const SESSION_OPEN_KEY = 'erato_basic_session_open';
-  const HEARTBEAT_KEY = 'erato_basic_heartbeat_seconds';
-  const SUSPECT_RESUME_KEY = 'erato_basic_suspect_resume';
-  const PRE_LEAVE_TIME_KEY = 'erato_basic_pre_leave_time';
-  const LEAVE_THRESHOLD_SECONDS = 5;   // se sei rimasto meno di questo prima di uscire (Home o chiusura brusca)...
-  const RESUME_THRESHOLD_SECONDS = 5;  // ...E rientrando risolvi in meno di questo, è sospetto
-  const SUSPECT_PENALTY_START_LEVEL = 75;  // dal Livello 75 in poi la penalità inizia ad applicarsi
-  const SUSPECT_PENALTY_MIN = 150; // penalità al Livello 75: 2 minuti e mezzo
-  const SUSPECT_PENALTY_MAX = 600; // penalità al Livello 200: 10 minuti
-  function suspectPenaltyForLevel(lvl){
-    // scala in modo lineare da 150s (Livello 75) a 600s (Livello 200)
-    const t = Math.min(1, Math.max(0, (lvl - SUSPECT_PENALTY_START_LEVEL) / (200 - SUSPECT_PENALTY_START_LEVEL)));
-    return SUSPECT_PENALTY_MIN + (SUSPECT_PENALTY_MAX - SUSPECT_PENALTY_MIN) * t;
-  }
+  const LAST_TIME_KEY = 'erato_scholarsglance_last_time';
+  const TOTAL_TIME_KEY = 'erato_scholarsglance_total_race_time';
+  const SESSION_OPEN_KEY = 'erato_scholarsglance_session_open';
+  const HEARTBEAT_KEY = 'erato_scholarsglance_heartbeat_seconds';
 
   // se all'apertura di QUALUNQUE livello troviamo una sessione rimasta "aperta" dalla volta scorsa
   // (nessuna uscita pulita rilevata: pagina chiusa bruscamente), deposito onestamente l'ultimo tempo
-  // conosciuto (nessuna penalità qui, chiudere per sbaglio/abitudine capita a chiunque), e registro
-  // quanto tempo era passato PRIMA di quella chiusura, per poterlo confrontare al momento del rientro.
+  // conosciuto — Prime Rush non applica penalità, è una classifica libera senza limiti di tempo per tentativo
   if (localStorage.getItem(SESSION_OPEN_KEY) === 'true'){
     const lastHeartbeat = parseFloat(localStorage.getItem(HEARTBEAT_KEY)) || 0;
     const prevTotal = parseFloat(localStorage.getItem(TOTAL_TIME_KEY)) || 0;
     localStorage.setItem(TOTAL_TIME_KEY, (prevTotal + lastHeartbeat).toFixed(1));
-    localStorage.setItem(PRE_LEAVE_TIME_KEY, lastHeartbeat.toFixed(1));
-    localStorage.setItem(SUSPECT_RESUME_KEY, 'true');
   }
   localStorage.removeItem(SESSION_OPEN_KEY);
   localStorage.removeItem(HEARTBEAT_KEY);
-  const FINISHED_ONCE_KEY = 'erato_basic_finished_once';
-  const RACE_END_DATE = new Date('2026-08-15T23:59:00+02:00');
+  const ACC_CORRECT_KEY = 'erato_scholarsglance_acc_correct';
+  const ACC_TOTAL_KEY = 'erato_scholarsglance_acc_total';
   const wrap = document.getElementById('wrap');
 
   // --- 3 effetti sonori: cerchio (selezione), giusto, sbagliato ---
@@ -882,14 +870,14 @@
   loadSound('right', 'eratostene_right.mp3');
   loadSound('wrong', 'eratostene_wrong.mp3');
   loadSound('winner', 'eratostene_winner.mp3');
-  loadSound('badge', 'eratostene_badge.mp3');
   loadSound('tap', 'tap.mp3'); // suono generico, riusabile per la maggior parte dei pulsanti della pagina
 
+  let currentPadSource = null;
   // volume specifico per singolo suono, sopra a quello scelto con la barra effetti
   // (o il 100% di default su mobile, dove la barra non c'e): 1 = nessuna modifica.
   // Ogni suono puo avere un valore diverso per PC e per mobile (o un solo numero,
   // se deve valere uguale su entrambi)
-  const SOUND_LEVELS = { pad: { desktop: 1, mobile: 0.7 }, badge: { desktop: 1, mobile: 0.5 }, winner: { desktop: 1, mobile: 1.1 } };
+  const SOUND_LEVELS = { pad: { desktop: 1, mobile: 0.7 }, winner: { desktop: 1, mobile: 1.1 } };
   function getSoundLevel(name){
     const level = SOUND_LEVELS[name];
     if (level === undefined) return 1;
@@ -899,7 +887,6 @@
     return typeof value === 'number' ? value : 1;
   }
 
-  let currentPadSource = null;
   function playSound(name){
     const buffer = soundBuffers[name];
     if (!buffer){
@@ -926,69 +913,43 @@
 
     // durante badge e winner, la musica scende a un volume fisso (15%, non -15% dal suo volume attuale) per farli sentire meglio
     if (window.MathemoryAudio && window.MathemoryAudio.duckMusic){
-      if (name === 'badge') window.MathemoryAudio.duckMusic(0.15, 1000);
       if (name === 'winner') window.MathemoryAudio.duckMusic(0.15, 1500);
     }
   }
   let levelStartTime = null;
   let heartbeatInterval = null;
 
-  // deposita nel totale il tempo passato su QUESTO livello quando lo risolvi davvero (Check giusto).
-  // Se il livello era segnato come "uscita sospetta" (Home o chiusura brusca troppo rapide) E anche
-  // il rientro è stato troppo rapido, applica la penalità: entrambe le condizioni devono essere vere.
+  // deposita nel totale il tempo passato su QUESTO livello quando lo risolvi (Check giusto).
+  // Nessuna penalità: Prime Rush è una classifica libera, senza il sistema anti-cheat di The Sieve.
   function commitElapsedTime(){
     const elapsed = (Date.now() - levelStartTime) / 1000;
-    let toAdd = elapsed;
-
-    if (localStorage.getItem(SUSPECT_RESUME_KEY) === 'true'){
-      const preLeaveTime = parseFloat(localStorage.getItem(PRE_LEAVE_TIME_KEY)) || 0;
-      // sotto il Livello 75 anche un genio può risolvere in pochi secondi: il controllo non si applica
-      if (levelNum >= SUSPECT_PENALTY_START_LEVEL && preLeaveTime < LEAVE_THRESHOLD_SECONDS && elapsed < RESUME_THRESHOLD_SECONDS){
-        toAdd += suspectPenaltyForLevel(levelNum);
-      }
-      localStorage.removeItem(SUSPECT_RESUME_KEY);
-      localStorage.removeItem(PRE_LEAVE_TIME_KEY);
-    }
-
     const prevTotal = parseFloat(localStorage.getItem(TOTAL_TIME_KEY)) || 0;
-    localStorage.setItem(TOTAL_TIME_KEY, (prevTotal + toAdd).toFixed(1));
+    localStorage.setItem(TOTAL_TIME_KEY, (prevTotal + elapsed).toFixed(1));
     if (heartbeatInterval) clearInterval(heartbeatInterval);
     localStorage.removeItem(SESSION_OPEN_KEY);
     localStorage.removeItem(HEARTBEAT_KEY);
     return elapsed;
   }
 
-  // Home: uscita volontaria ma il livello NON è stato risolto. Deposito il tempo, e registro
-  // quanto sei rimasto prima di uscire, per il confronto al momento del rientro.
+  // Home: uscita volontaria ma il livello NON è stato risolto. Deposito il tempo, senza penalità.
   function recordHomeExit(){
     const elapsed = (Date.now() - levelStartTime) / 1000;
     const prevTotal = parseFloat(localStorage.getItem(TOTAL_TIME_KEY)) || 0;
     localStorage.setItem(TOTAL_TIME_KEY, (prevTotal + elapsed).toFixed(1));
-    localStorage.setItem(PRE_LEAVE_TIME_KEY, elapsed.toFixed(1));
-    localStorage.setItem(SUSPECT_RESUME_KEY, 'true');
     if (heartbeatInterval) clearInterval(heartbeatInterval);
     localStorage.removeItem(SESSION_OPEN_KEY);
     localStorage.removeItem(HEARTBEAT_KEY);
   }
 
-  // --- titoli di rango, a salire per livello raggiunto ---
-  const RANKS = [
-    { level: 150, title: 'Master of the Sieve', phrase: "You've mastered the sieve itself." },
-    { level: 75,  title: 'Geometer of Primes', phrase: 'Few see the structure beneath the primes as clearly as you.' },
-    { level: 25,  title: 'Pattern Seeker', phrase: 'The patterns are starting to reveal themselves.' },
-    { level: 10,  title: 'Apprentice of Cyrene', phrase: 'A student of Cyrene, taking your first true steps.' },
-  ];
-  function rankForLevel(lvl){
-    return RANKS.find(r => lvl >= r.level) || null;
-  }
-
-  // --- colore dei cerchi/numeri selezionati, a gradini ogni 50 livelli ---
+  // --- colore dei cerchi/numeri selezionati, a gradini proporzionali sui 50 livelli
+  //     (stessi rapporti 25%/50%/75% usati da Prime Rush sui suoi 200) ---
   function circleColorForLevel(lvl){
-    if (lvl >= 150) return '#C1554B'; // rosso
-    if (lvl >= 100) return '#D9793A'; // arancione scuro
-    if (lvl >= 50)  return '#EFAE68'; // arancione chiaro
+    if (lvl >= 38) return '#C1554B'; // rosso
+    if (lvl >= 25) return '#D9793A'; // arancione scuro
+    if (lvl >= 13) return '#EFAE68'; // arancione chiaro
     return '#E8C468'; // giallo base
   }
+
 
   function isPrime(n){
     if (n < 2) return false;
@@ -1006,46 +967,193 @@
     `;
   }
 
-  const levelFetchController = new AbortController();
-  const levelFetchTimeout = setTimeout(() => levelFetchController.abort(), 7000);
+  // --- generazione procedurale, nessun file da caricare: stesso motore di Infinite
+  // Primes, ma cap dei primi FISSO a 199 (non cresce) e curva di difficoltà compressa
+  // sui soli 50 livelli invece che centinaia ---
+  const PRIME_CAP = 199;
 
-  fetch('eratostene_thesieve.json', { signal: levelFetchController.signal })
-    .then(res => {
-      clearTimeout(levelFetchTimeout);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    })
-    .then(sections => {
-      const allLevels = [];
-      sections.forEach(section => {
-        section.livelli.forEach(lv => {
-          allLevels.push({ ...lv, checkpoint: section.checkpoint });
-        });
+  // --- modello di difficoltà: grandezza del numero + vicinanza a un multiplo di 7 ---
+  function recognitionScore(p){
+    if (p <= 7) return 0.05;
+    if (p <= 19) return 0.15;
+    if (p <= 47) return 0.35;
+    if (p <= 97) return 0.55;
+    return 0.75;
+  }
+  function mod7Bonus(p){
+    if (p < 70) return 0;
+    const dist7 = Math.min(p % 7, 7 - (p % 7));
+    if (dist7 === 1) return 0.35;
+    if (dist7 === 2) return 0.15;
+    return 0;
+  }
+  function difficultyScore(p){
+    return recognitionScore(p) + mod7Bonus(p);
+  }
+
+  // t continuo (0..1): qui raggiunge il massimo esattamente al livello 50 (l'ultimo),
+  // a differenza di Infinite Primes dove il traguardo è molto più lontano (livello 400)
+  function difficultyForLevel(levelNum){
+    return Math.min(1, levelNum / 50);
+  }
+
+  // randomizzazione POSIZIONALE: stesso discorso, massimo caos raggiunto al livello 50
+  function positionRandomnessForLevel(levelNum){
+    return Math.min(1, levelNum / 50);
+  }
+
+  function lerp(a, b, t){ return a + (b - a) * t; }
+
+  // memoria delle combinazioni di primi degli ultimi 5 livelli generati, per evitare che
+  // la stessa combinazione (stessi 5 primi, quindi anche stessa somma) ricompaia troppo
+  // vicina - sessionStorage perché i livelli qui si generano al volo ad ogni caricamento,
+  // esattamente come in Infinite Primes (stesso motivo: livello 15 di due giocatori
+  // diversi, o alla riapertura dello stesso giocatore, è sempre diverso)
+  const RECENT_COMBOS_KEY = 'scholarsglance_recent_combos';
+  const RECENT_COMBOS_WINDOW = 5;
+
+  function getRecentCombos(){
+    try {
+      const raw = sessionStorage.getItem(RECENT_COMBOS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e){ return []; }
+  }
+  function isComboRecent(combo, recent){
+    const key = [...combo].sort((a,b) => a-b).join(',');
+    return recent.some(r => r === key);
+  }
+  function pushRecentCombo(combo, recent){
+    const key = [...combo].sort((a,b) => a-b).join(',');
+    const updated = [...recent, key].slice(-RECENT_COMBOS_WINDOW);
+    try { sessionStorage.setItem(RECENT_COMBOS_KEY, JSON.stringify(updated)); } catch(e){}
+  }
+
+  function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function shuffle(arr){
+    for (let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // sceglie 5 primi distinti pesando la probabilità in base a quanto il loro punteggio
+  // di difficoltà è vicino al target (più vicino = più probabile, non garantito)
+  function pickFivePrimes(primesPool, targetScore){
+    const pool = [...primesPool];
+    const weights = pool.map(p => Math.max(1e-6, 1 - Math.min(1, Math.abs(difficultyScore(p) - targetScore) / 0.6)));
+    const chosen = [];
+    while (chosen.length < 5 && pool.length > 0){
+      const total = weights.reduce((a, b) => a + b, 0);
+      let r = Math.random() * total;
+      let idx = 0;
+      for (let i = 0; i < weights.length; i++){
+        r -= weights[i];
+        if (r <= 0){ idx = i; break; }
+      }
+      chosen.push(pool[idx]);
+      pool.splice(idx, 1);
+      weights.splice(idx, 1);
+    }
+    return chosen;
+  }
+
+  // posizioni dei 5 primi in griglia: vicine se facile (clusterT alto), sparse se difficile (clusterT basso)
+  function buildGridPositions(clusterT){
+    const cells = [];
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) cells.push([r, c]);
+    const targetSpacing = lerp(4.0, 1.1, clusterT);
+
+    const start = cells[Math.floor(Math.random() * cells.length)];
+    const chosen = [start];
+    let remaining = cells.filter(cell => cell !== start);
+
+    for (let k = 0; k < 4; k++){
+      remaining.sort((a, b) => {
+        const minA = Math.min(...chosen.map(p => Math.abs(a[0]-p[0]) + Math.abs(a[1]-p[1])));
+        const minB = Math.min(...chosen.map(p => Math.abs(b[0]-p[0]) + Math.abs(b[1]-p[1])));
+        return Math.abs(minA - targetSpacing) - Math.abs(minB - targetSpacing);
       });
+      const topN = remaining.slice(0, Math.min(3, remaining.length));
+      const pick = topN[Math.floor(Math.random() * topN.length)];
+      chosen.push(pick);
+      remaining = remaining.filter(cell => cell !== pick);
+    }
+    return chosen.map(([r, c]) => r * 5 + c);
+  }
 
-      if (levelNum < 1 || levelNum > allLevels.length){
-        showError(`Level ${levelNum} doesn't exist (valid range: 1-${allLevels.length}).`);
-        return;
-      }
+  function generateLevel(levelNum){
+    const cap = PRIME_CAP;
+    const t = difficultyForLevel(levelNum);
 
-      const levelData = allLevels[levelNum - 1];
-      renderLevel(levelData);
-    })
-    .catch(err => {
-      if (err.name === 'AbortError'){
-        // 7 secondi sono già tanti per un file che di norma pesa pochi KB: la connessione
-        // è instabile o assente, meglio dirlo chiaramente che restare bloccati per sempre
-        showError('This is taking too long. Please check your connection and reload the page.');
-        return;
+    const primesPool = [];
+    for (let n = 2; n <= cap; n++){ if (isPrime(n) && n !== cap) primesPool.push(n); }
+    const evenComposites = [];
+    const oddComposites = [];
+    for (let n = 4; n <= cap; n++){
+      if (isPrime(n)) continue;
+      if (n % 2 === 0) evenComposites.push(n); else oddComposites.push(n);
+    }
+
+    // 1) 5 primi scelti in base al punteggio di difficoltà target - riprovo se la combinazione
+    //    coincide con una delle ultime 5 generate (stessi 5 primi = stessa somma)
+    const targetScore = lerp(0.10, 0.95, t);
+    const recentCombos = getRecentCombos();
+    let chosen = pickFivePrimes(primesPool, targetScore);
+    if (chosen.length < 5){
+      const rest = shuffle(primesPool.filter(p => !chosen.includes(p)));
+      for (const p of rest){ if (chosen.length >= 5) break; chosen.push(p); }
+    }
+    let attempts = 0;
+    while (isComboRecent(chosen, recentCombos) && attempts < 30 && primesPool.length > 5){
+      chosen = pickFivePrimes(primesPool, targetScore);
+      if (chosen.length < 5){
+        const rest = shuffle(primesPool.filter(p => !chosen.includes(p)));
+        for (const p of rest){ if (chosen.length >= 5) break; chosen.push(p); }
       }
-      showError(`
-        Could not load <code>eratostene_thesieve.json</code>.<br><br>
-        If you're testing this by double-clicking the file (a <code>file://</code> address), most browsers block this kind of request for security reasons.<br><br>
-        Fix: open a terminal in this folder and run <code>python -m http.server 8000</code>, then visit
-        <code>http://localhost:8000/index.html</code> instead.<br><br>
-        Technical detail: ${err.message}
-      `);
-    });
+      attempts++;
+    }
+    pushRecentCombo(chosen, recentCombos);
+    shuffle(chosen);
+
+    // 2) quota di pari tra i 20 riempitivi (alta se facile, bassa se difficile) +
+    //    controllo doppioni (liberi se facile, sempre più rari/assenti se difficile)
+    const evenFraction = lerp(0.75, 0.15, t);
+    let numEven = Math.round(20 * evenFraction);
+    let numOdd = 20 - numEven;
+    if (!evenComposites.length){ numOdd += numEven; numEven = 0; }
+    if (!oddComposites.length){ numEven += numOdd; numOdd = 0; }
+
+    const preferUnique = Math.min(1, t / 0.5);
+    const used = new Set();
+    function pickOne(pool){
+      const fresh = pool.filter(x => !used.has(x));
+      const choice = (fresh.length && Math.random() < preferUnique) ? pickRandom(fresh) : pickRandom(pool);
+      used.add(choice);
+      return choice;
+    }
+    const composti = [];
+    for (let i = 0; i < numEven; i++) composti.push(pickOne(evenComposites));
+    for (let i = 0; i < numOdd; i++) composti.push(pickOne(oddComposites));
+
+    // 3) posizione in griglia: vicine se facile, sparse se difficile
+    const posT = positionRandomnessForLevel(levelNum);
+    const positions = buildGridPositions(1 - posT);
+    const griglia = new Array(25).fill(null);
+    positions.forEach((pos, i) => { griglia[pos] = chosen[i]; });
+    let compIdx = 0;
+    for (let i = 0; i < 25; i++){
+      if (griglia[i] === null){ griglia[i] = composti[compIdx++]; }
+    }
+
+    return { griglia, checkpoint: cap };
+  }
+
+  if (levelNum < 1 || levelNum > 50){
+    showError(`Level ${levelNum} doesn't exist (valid range: 1-50).`);
+  } else {
+    renderLevel(generateLevel(levelNum));
+  }
 
   // stessa dimensione fissa del pulsante suono dell'index: 55px, indipendente
   // dalla larghezza dello schermo e dal titolo di questa pagina
@@ -1097,41 +1205,23 @@
     }
   }
 
-  // posiziona badge+frase del rango a destra della griglia, allineati in alto col suo
-  // bordo superiore: calcolato dal vero (non hardcoded), così funziona a qualunque
-  // larghezza di finestra desktop, ma solo quando la griglia e il pannello laterale
-  // sono davvero affiancati (sopra i 1400px: sotto quella soglia si impilano, vedi CSS)
-  function positionRankBadge(){
+  // tasto skip: il suo fondo allineato al fondo della griglia, calcolato dal vero
+  // (non con un margine fisso) — solo quando c'è davvero spazio a destra della
+  // griglia (sopra i 1400px: sotto quella soglia vale il CSS statico)
+  function positionDevSkipBtn(){
     const grid = document.getElementById('gridEl');
     const sidePanel = document.querySelector('.side-panel-wrap');
-    const wide = window.innerWidth > 1400; // sotto questa soglia vale il CSS statico per il layout impilato
-
-    const badge = document.querySelector('.rank-badge');
-    const phrase = document.querySelector('.rank-phrase');
-    const callout = document.getElementById('rankCallout');
-    if (badge && phrase && callout && grid && sidePanel && wide){
-      const calloutRect = callout.getBoundingClientRect();
-      const gridRect = grid.getBoundingClientRect();
-      const sidePanelRect = sidePanel.getBoundingClientRect();
-
-      const top = gridRect.top - calloutRect.top;
-      const left = sidePanelRect.left + (sidePanelRect.width - badge.offsetWidth) / 2 - calloutRect.left;
-      badge.style.top = top + 'px';
-      badge.style.left = left + 'px';
-      phrase.style.top = (top + badge.offsetHeight + 8) + 'px';
-      phrase.style.left = left + 'px';
-    }
+    const skipBtn = document.getElementById('devSkipBtn');
+    if (!grid || !sidePanel || !skipBtn) return;
+    if (window.innerWidth <= 1400) return;
+    const gridRect = grid.getBoundingClientRect();
+    const wrapRect = sidePanel.getBoundingClientRect();
+    skipBtn.style.top = (gridRect.bottom - wrapRect.top - skipBtn.offsetHeight) + 'px';
   }
 
   function renderLevel(levelData){
     const grid = levelData.griglia;
     const circleColor = circleColorForLevel(levelNum);
-    const rankInfo = rankForLevel(levelNum);
-    // se il rango di QUESTO livello è diverso da quello del livello precedente, il badge si è appena sbloccato
-    const prevRankInfo = rankForLevel(levelNum - 1);
-    if (rankInfo && (!prevRankInfo || prevRankInfo.title !== rankInfo.title)){
-      playSound('badge');
-    }
 
     // "Check" impilato lettera per lettera solo su mobile, testo normale su desktop
     const checkLabelHtml = window.innerWidth <= 900 ? 'C<br>h<br>e<br>c<br>k' : 'Check';
@@ -1139,14 +1229,8 @@
     wrap.style.setProperty('--circle-color', circleColor);
 
     document.getElementById('levelTitle').innerHTML =
-      `Eratosthenes <span class="accent">·</span> The Sieve <span class="accent">·</span> Level ${levelNum}`;
+      `Eratosthenes <span class="accent">·</span> Scholar's Glance <span class="accent">·</span> Level ${levelNum}`;
     sizeTitleIconButtons();
-
-    const rankCalloutEl = document.getElementById('rankCallout');
-    rankCalloutEl.classList.toggle('no-rank', !rankInfo);
-    rankCalloutEl.innerHTML = rankInfo
-      ? `<span class="rank-badge">${rankInfo.title}</span><span class="rank-phrase">${rankInfo.phrase}</span>`
-      : `<span class="rank-badge">Placeholder rank</span><span class="rank-phrase">Placeholder phrase text goes here.</span>`;
 
     document.getElementById('levelLayout').innerHTML = `
       <div class="grid" id="gridEl"></div>
@@ -1157,7 +1241,9 @@
           </div>
           <div class="answer-row">
             <input type="number" id="answerInput" placeholder="Sum of the primes" inputmode="numeric">
+            <button type="button" id="devSkipBtn" class="dev-skip-btn" aria-label="Dev skip">»</button>
             <button class="check" id="checkBtn"><span class="check-label">${checkLabelHtml}</span></button>
+            <button type="button" class="sight-btn" id="sightBtn" disabled>👁 Sight</button>
           </div>
           <p class="feedback" id="feedback"></p>
         </div>
@@ -1232,8 +1318,93 @@
       gridEl.appendChild(cell);
     });
 
-    positionRankBadge(); // solo ORA la griglia ha la sua altezza vera (celle già dentro)
+    positionDevSkipBtn(); // solo ORA la griglia ha la sua altezza vera (celle già dentro)
     randomizeConstellation(); // stesso motivo: serve l'altezza vera del contenitore
+
+    // ============================================================
+    // MECCANICA: visibilità a tempo + blur ritardato + pulsante Sight
+    // ============================================================
+    // curva lineare 10s (livello 1) -> 0.3s (livello 50): quanto restano leggibili
+    // i numeri in griglia prima di diventare invisibili sullo sfondo
+    const VISIBILITY_DURATION = lerp(10, 0.3, (levelNum - 1) / 49);
+    // curva lineare 3s (livello 1) -> 10s (livello 50): cooldown del pulsante Sight
+    const COOLDOWN_DURATION = lerp(3, 10, (levelNum - 1) / 49);
+    // il pannello dei 5 selezionati resta leggibile fino al livello 35, poi si offusca
+    // sempre di più fino a diventare del tutto illeggibile al livello 50
+    const BLUR_START_LEVEL = 35;
+    const MAX_BLUR_PX = 9;
+    const blurAmount = levelNum < BLUR_START_LEVEL
+      ? 0
+      : lerp(0, MAX_BLUR_PX, (levelNum - BLUR_START_LEVEL) / (50 - BLUR_START_LEVEL));
+
+    const sightBtn = document.getElementById('sightBtn');
+    let numbersVisible = true; // stato corrente: griglia leggibile o no
+    let hideTimeoutId = null;
+    let sightOnCooldown = false;
+    let cooldownEndsAt = 0;
+    let cooldownLabelInterval = null;
+
+    // applica lo stato corrente (visibile/invisibile) a TUTTE le celle della griglia
+    // e al pannello dei 5 selezionati - va richiamata anche da render() ogni volta che
+    // i chip vengono ricreati, altrimenti i nuovi elementi nascerebbero senza il filtro
+    function applyVisibilityState(){
+      gridEl.querySelectorAll('.cell').forEach(cell => {
+        cell.classList.toggle('number-hidden', !numbersVisible);
+      });
+      const blurPx = numbersVisible ? 0 : blurAmount;
+      pickedRow.querySelectorAll('.picked-chip').forEach(chip => {
+        chip.style.filter = blurPx > 0 ? `blur(${blurPx}px)` : '';
+      });
+    }
+
+    function updateSightButtonState(){
+      // utilizzabile SOLO quando i numeri sono già invisibili (mai durante la finestra
+      // di visibilità normale, altrimenti diventerebbe un modo per allungarla a piacere)
+      // e non in cooldown
+      sightBtn.disabled = numbersVisible || sightOnCooldown;
+    }
+
+    // mostra i numeri per "duration" secondi, poi li rinasconde da sola: usata sia
+    // per la prima visualizzazione del livello sia ogni volta che si preme Sight
+    function revealNumbers(duration){
+      numbersVisible = true;
+      applyVisibilityState();
+      updateSightButtonState();
+      if (hideTimeoutId) clearTimeout(hideTimeoutId);
+      hideTimeoutId = setTimeout(() => {
+        numbersVisible = false;
+        applyVisibilityState();
+        updateSightButtonState();
+      }, duration * 1000);
+    }
+
+    sightBtn.addEventListener('click', () => {
+      if (sightBtn.disabled) return;
+      playSound('tap');
+      revealNumbers(VISIBILITY_DURATION);
+
+      // il cooldown parte SUBITO alla pressione, in parallelo alla finestra di
+      // visibilità appena aperta (non dopo che questa finisce): ai livelli bassi il
+      // cooldown è più corto della visibilità stessa, quindi comunque il pulsante
+      // resta disabilitato finché i numeri non tornano invisibili
+      sightOnCooldown = true;
+      cooldownEndsAt = Date.now() + COOLDOWN_DURATION * 1000;
+      updateSightButtonState();
+      if (cooldownLabelInterval) clearInterval(cooldownLabelInterval);
+      cooldownLabelInterval = setInterval(() => {
+        const remaining = Math.max(0, (cooldownEndsAt - Date.now()) / 1000);
+        if (remaining <= 0){
+          clearInterval(cooldownLabelInterval);
+          sightOnCooldown = false;
+          sightBtn.textContent = '👁 Sight';
+          updateSightButtonState();
+        } else {
+          sightBtn.textContent = `👁 Sight (${remaining.toFixed(1)}s)`;
+        }
+      }, 100);
+    });
+
+    revealNumbers(VISIBILITY_DURATION); // il livello parte sempre visibile, poi scatta il buio da solo
 
     function toggleCell(i){
       if (selected.has(i)){
@@ -1272,6 +1443,7 @@
         pickedRow.appendChild(chip);
       }
       updateCheckButtonState();
+      applyVisibilityState(); // i chip sono stati appena ricreati: ereditano lo stato corrente
     }
     render();
     window.addEventListener('resize', render);
@@ -1279,6 +1451,30 @@
 
     // solo ORA il pannello destro ha davvero tutti e 5 i riquadri dentro: l'altezza misurata è quella reale
     alignSidePanel();
+
+    // --- pulsante skip (solo PC, solo test): apre il popup con le 4 opzioni ---
+    document.getElementById('devSkipBtn').addEventListener('click', () => {
+      document.getElementById('devSkipModal').classList.add('visible');
+    });
+    document.getElementById('devSkipCloseBtn').addEventListener('click', () => {
+      document.getElementById('devSkipModal').classList.remove('visible');
+    });
+    document.getElementById('devSkipModal').addEventListener('click', (e) => {
+      if (e.target.id === 'devSkipModal') document.getElementById('devSkipModal').classList.remove('visible');
+    });
+    document.getElementById('devSkip1Btn').addEventListener('click', () => {
+      window.location.href = `eratostene_scholarsglance.html?n=${levelNum + 1}`;
+    });
+    document.getElementById('devSkip10Btn').addEventListener('click', () => {
+      window.location.href = `eratostene_scholarsglance.html?n=${Math.min(50, levelNum + 10)}`;
+    });
+    document.getElementById('devSkip50Btn').addEventListener('click', () => {
+      window.location.href = 'eratostene_scholarsglance.html?n=50';
+    });
+    document.getElementById('devSkipResetBtn').addEventListener('click', () => {
+      Object.keys(localStorage).filter(k => k.startsWith('erato_scholarsglance')).forEach(k => localStorage.removeItem(k));
+      window.location.href = 'eratostene_scholarsglance.html?n=1';
+    });
 
     document.getElementById('checkBtn').addEventListener('click', () => {
       playSound('tap');
@@ -1289,6 +1485,14 @@
       const chosenAllPrimes = [...selected].every(i => isPrime(grid[i]));
       const foundAllPrimes = grid.every((v, i) => !isPrime(v) || selected.has(i));
 
+      // precisione: conto ogni cella scelta in questo tentativo, giusta o sbagliata che sia
+      const selectedCount = selected.size;
+      const correctCount = [...selected].filter(i => isPrime(grid[i])).length;
+      const prevTotal = parseInt(localStorage.getItem(ACC_TOTAL_KEY)) || 0;
+      const prevCorrect = parseInt(localStorage.getItem(ACC_CORRECT_KEY)) || 0;
+      localStorage.setItem(ACC_TOTAL_KEY, String(prevTotal + selectedCount));
+      localStorage.setItem(ACC_CORRECT_KEY, String(prevCorrect + correctCount));
+
       if (!answerProvided){
         // la somma manca: errore veloce, ha sempre la precedenza su qualunque errore di selezione
         triggerFastError();
@@ -1296,31 +1500,19 @@
       }
 
       if (answer === correctSum && chosenAllPrimes && foundAllPrimes){
-        // deposito il tempo di questo livello (chiude la sessione in modo pulito)
+        // deposito il tempo di questo livello (chiude la sessione in modo pulito) e lo salvo anche come "ultimo tempo"
         const elapsed = commitElapsedTime();
+        localStorage.setItem(LAST_TIME_KEY, elapsed.toFixed(1));
 
-        if (levelNum >= 200){
+        if (levelNum >= 50){
           playSound('winner');
-          localStorage.setItem(STORAGE_KEY, '200');
-          const raceEnded = Date.now() > RACE_END_DATE.getTime();
-          const alreadyFinishedOnce = localStorage.getItem(FINISHED_ONCE_KEY) === 'true';
-
-          if (raceEnded || alreadyFinishedOnce){
-            // la gara è finita per davvero, oppure l'occasione è già stata usata: niente popup, dritti in home
-            resetForNewRun();
-            window.location.href = 'index.html';
-            return;
-          } else {
-            // prima volta che si finisce, gara ancora in corso: unica occasione per il nickname
-            localStorage.setItem(FINISHED_ONCE_KEY, 'true');
-            document.getElementById('finishTotalTime').textContent = (localStorage.getItem(TOTAL_TIME_KEY) || '0') + 's';
-            document.getElementById('finishModal').classList.add('visible');
-          }
+          // Scholar's Glance non ha una data di scadenza: il popup compare sempre a ogni run completata
+          document.getElementById('finishTotalTime').textContent = (localStorage.getItem(TOTAL_TIME_KEY) || '0') + 's';
+          document.getElementById('finishModal').classList.add('visible');
         } else {
           playSound('right');
           // risposta corretta: si passa subito al livello successivo, senza messaggio intermedio
-          localStorage.setItem(STORAGE_KEY, String(levelNum + 1));
-          window.location.href = `eratostene_thesieve.html?n=${levelNum + 1}`;
+          window.location.href = `eratostene_scholarsglance.html?n=${levelNum + 1}`;
         }
       } else if (chosenAllPrimes && foundAllPrimes){
         // selezione giusta, solo la somma è sbagliata: errore veloce
@@ -1344,13 +1536,6 @@
   }
 
   // --- popup di fine gara: salva il nickname (o lo salta), poi torna sempre alla home ---
-  // dopo la fine gara si riparte da zero: si azzera tutto tranne il flag "nickname già usato"
-  function resetForNewRun(){
-    Object.keys(localStorage)
-      .filter(k => k.startsWith('erato_basic') && k !== FINISHED_ONCE_KEY)
-      .forEach(k => localStorage.removeItem(k));
-  }
-
   document.getElementById('finishConfirmBtn').addEventListener('click', () => {
     const nickname = document.getElementById('finishNickname').value.trim();
     const note = document.getElementById('finishNote');
@@ -1365,76 +1550,28 @@
       return;
     }
 
-    localStorage.setItem('erato_basic_finisher_nickname', nickname);
+    localStorage.setItem('erato_scholarsglance_finisher_nickname', nickname);
     const totalRaceTime = localStorage.getItem(TOTAL_TIME_KEY) || '0';
     const timeValue = parseFloat(totalRaceTime);
 
-    // invio il tempo al Worker per il podio globale; se fallisce (rete assente, Worker giù)
-    // l'utente prosegue comunque, non è bloccante
-    fetch('https://eratostene.sl-eternal-lux.workers.dev/submit', {
+    // invio il tempo al Worker per il podio (terza classifica, dedicata); se fallisce
+    // (rete assente, Worker giù) l'utente prosegue comunque, non è bloccante
+    fetch('https://eratostene.sl-eternal-lux.workers.dev/submit-scholarsglance', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nickname, time: timeValue })
     }).catch(() => {});
 
-    resetForNewRun();
     window.location.href = 'index.html';
   });
 
   document.getElementById('finishSkipBtn').addEventListener('click', () => {
-    resetForNewRun();
     window.location.href = 'index.html';
   });
 </script>
 
 <script>window.MATHEMORY_MUSIC_VOLUME_MULTIPLIER = { desktop: 1.25, mobile: 1.875 };</script>
 <script src="mathemory-audio.js"></script>
-
-<script>
-  // --- pubblicità: ogni annuncio isolato nel proprio iframe, con il proprio atOptions privato.
-  // Il formato Adsterra "highperformanceformat" usa una variabile globale condivisa (atOptions):
-  // con più annunci sulla stessa pagina si sovrascrivono a vicenda se non isolati così.
-  // Il codice del dispositivo "sbagliato" non viene MAI creato nella pagina — evita impression
-  // non valide che romperebbero il rapporto con Adsterra.
-  //
-  // Su mobile la struttura riusa via CSS gli stessi 3 div del desktop (ad-a diventa il banner
-  // in alto, ad-side-small quello in basso, ad-top-rect resta nascosto): qui scelgo per ciascuno
-  // la chiave e le dimensioni giuste in base al dispositivo, invece di avere elementi separati.
-  (function(){
-    const isMobileDevice = window.innerWidth <= 900;
-    const AD_SLOTS_DESKTOP = [
-      { elementId: 'adSlotA',         key: 'a6525e43bef9221ab88fe82913548d2e', width: 160, height: 600 },
-      { elementId: 'adSlotTopRect',   key: '50f98522da8b5e97edc7f610cc39417c', width: 300, height: 250 },
-      { elementId: 'adSlotSideSmall', key: 'e9e96fb4584ea554b462b7eccbf26cba', width: 160, height: 300 },
-    ];
-    const AD_SLOTS_MOBILE = [
-      { elementId: 'adSlotA',         key: 'a2a9c900934d95ac8d859267d025b589', width: 320, height: 50 },
-      { elementId: 'adSlotSideSmall', key: 'fd6daf0ccf42f29bcea4f242a1daa43f', width: 320, height: 50 },
-    ];
-
-    function injectAdIframe(elementId, key, width, height){
-      if (!key) return; // nessun codice ancora inserito per questo slot: resta il placeholder
-      const el = document.getElementById(elementId);
-      if (!el) return;
-      el.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      iframe.style.width = width + 'px';
-      iframe.style.height = height + 'px';
-      iframe.style.border = 'none';
-      iframe.style.display = 'block';
-      iframe.scrolling = 'no';
-      iframe.srcdoc =
-        '<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body>' +
-        '<script>atOptions={"key":"' + key + '","format":"iframe","height":' + height + ',"width":' + width + ',"params":{}};<\/script>' +
-        '<script src="https://www.highperformanceformat.com/' + key + '/invoke.js"><\/script>' +
-        '</body></html>';
-      el.appendChild(iframe);
-    }
-
-    const slots = isMobileDevice ? AD_SLOTS_MOBILE : AD_SLOTS_DESKTOP;
-    slots.forEach(slot => injectAdIframe(slot.elementId, slot.key, slot.width, slot.height));
-  })();
-</script>
 
 </body>
 </html>
