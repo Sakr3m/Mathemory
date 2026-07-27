@@ -825,21 +825,22 @@
   }
 
   // --- generazione live dei livelli, nessun file da caricare: infinita per davvero ---
-  const FIXED_CAPS = [37,41,43,47,59,61,71,79,89,101,103,113,137,151,167,179,199,233,263,307];
-
   function nextPrimeAtLeast(n){
     let candidate = Math.max(2, Math.floor(n));
     while (!isPrime(candidate)) candidate++;
     return candidate;
   }
 
-  // il cap segue le 20 sezioni originali fino al Livello 200, poi continua a crescere all'infinito
+  // niente più fasce/sezioni intermedie: un'unica curva lineare dal livello 1 (cap 37)
+  // fino al livello 350 (cap 997, il numero primo più alto gestibile senza rompere la
+  // griglia con cifre a 4 numeri) — da lì in poi resta fermo a 997 per sempre
   function capForLevel(levelNum){
-    const MAX_CAP = 997; // oltre questo, i numeri a 4+ cifre romperebbero la griglia: il cap resta fermo qui
-    const section = Math.floor((levelNum - 1) / 10);
-    if (section < FIXED_CAPS.length) return FIXED_CAPS[section];
-    const extraSections = section - FIXED_CAPS.length + 1;
-    return Math.min(nextPrimeAtLeast(307 + extraSections * 60), MAX_CAP);
+    const START_CAP = 37;
+    const MAX_CAP = 997;
+    const MAX_LEVEL = 350;
+    if (levelNum >= MAX_LEVEL) return MAX_CAP;
+    const target = START_CAP + (MAX_CAP - START_CAP) * (levelNum - 1) / (MAX_LEVEL - 1);
+    return nextPrimeAtLeast(target);
   }
 
   // --- nuovo modello di difficoltà: grandezza del numero + vicinanza a un multiplo di 7 ---
