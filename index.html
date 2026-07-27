@@ -2148,7 +2148,7 @@
             <button type="button" class="mobile-game-number" onclick="openRulesModal()">Game ${number} - Rules</button>
             <p class="mobile-tap-hint">Tap Game ${number} to read the rules.</p>
           </div>
-          <p class="mobile-locked-desc">${g.unlockLabel}</p>
+          <p class="mobile-locked-desc">${g.unlockLabel === 'August 1' ? '' : g.unlockLabel}</p>
           ${mobileNavRowHtml()}
         </div>`;
     }
@@ -2426,7 +2426,8 @@
     const geometry = computeCardGeometry(games[0], 1);
     const overlay = document.createElement('div');
     overlay.className = 'coming-soon-card';
-    const dateHtml = comingSoonUnlockLabels[index - 1] ? `<p class="unlock-date">${comingSoonUnlockLabels[index - 1]}</p>` : '';
+    const rawDate = comingSoonUnlockLabels[index - 1];
+    const dateHtml = (rawDate && rawDate !== 'August 1, 2026') ? `<p class="unlock-date">${rawDate}</p>` : '';
     overlay.innerHTML = `<h2 class="game-title-centered">COMING SOON</h2>${dateHtml}`;
     document.body.appendChild(overlay);
     overlay._targetGeometry = geometry; // riletta da showComingSoonPage per l'animazione di comparsa
