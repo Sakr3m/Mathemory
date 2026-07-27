@@ -1708,13 +1708,13 @@
   }
 
   // le 11 date mostrate su ciascuna card "Coming Soon": la seconda card (il primo
-  // "Coming Soon" dopo Eratosthenes) è il 13 agosto 2026, poi ogni data successiva è
+  // "Coming Soon" dopo Eratosthenes) è il 1 agosto 2026, poi ogni data successiva è
   // +12 giorni di calendario uniformi (stesso schema di raceEndLabels/unlockLabels).
   // Calcolata in UTC puro (solo anno/mese/giorno, senza orario né fuso) per non
   // dipendere dal fuso orario di chi esegue il codice
   const comingSoonUnlockLabels = [];
   {
-    let d = new Date(Date.UTC(2026, 7, 13)); // 13 agosto 2026
+    let d = new Date(Date.UTC(2026, 7, 1)); // 1 agosto 2026
     for (let i = 0; i < 11; i++){
       comingSoonUnlockLabels.push(d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }));
       d = new Date(d);
@@ -1724,6 +1724,7 @@
 
   // --- le 11 date di sblocco per i "coming soon" ---
   const comingSoonDates = [
+    '2026-08-01T00:00:00+02:00',
     '2026-08-13T00:00:00+02:00',
     '2026-08-25T00:00:00+02:00',
     '2026-09-06T00:00:00+02:00',
@@ -1734,7 +1735,6 @@
     '2026-11-05T00:00:00+01:00',
     '2026-11-17T00:00:00+01:00',
     '2026-11-29T00:00:00+01:00',
-    '2026-12-11T00:00:00+01:00',
   ];
 
   // --- progressi salvati per dispositivo ---
@@ -1764,6 +1764,7 @@
   // date di fine gara per tutti e 12 i giochi (già formattate, stesso fuso Europa/Roma usato ovunque)
   const raceEndLabels = [
     'August 15, 2026, 23:59 (UTC+02:00)',
+    'August 12, 2026, 23:59 (UTC+02:00)',
     'August 24, 2026, 23:59 (UTC+02:00)',
     'September 5, 2026, 23:59 (UTC+02:00)',
     'September 17, 2026, 23:59 (UTC+02:00)',
@@ -1774,12 +1775,12 @@
     'November 16, 2026, 23:59 (UTC+01:00)',
     'November 28, 2026, 23:59 (UTC+01:00)',
     'December 10, 2026, 23:59 (UTC+01:00)',
-    'December 22, 2026, 23:59 (UTC+01:00)',
   ];
   games[0].raceEnd = raceEndLabels[0];
 
   // etichette già formattate (evita differenze di fuso tra il dispositivo dell'utente e il fuso di riferimento)
   const unlockLabels = [
+    'August 1',
     'August 13',
     'August 25',
     'September 6',
@@ -1790,7 +1791,6 @@
     'November 5',
     'November 17',
     'November 29',
-    'December 11',
   ];
 
   comingSoonDates.forEach((d, i) => {
