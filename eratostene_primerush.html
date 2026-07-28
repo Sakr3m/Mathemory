@@ -234,15 +234,24 @@
   }
 
   .answer-row{ display:flex; flex-direction:column; gap: 0.69rem; }
-  input[type="number"]{
+  .answer-input-wrap{
+    position: relative;
     background: var(--bg-panel);
     border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  input[type="number"]{
+    position: relative;
+    background: transparent;
+    border: none;
     border-radius: 6px;
     color: var(--ink);
     font-family:'Space Mono', monospace;
     font-size: 1.265rem;
     padding: 0.92rem;
     width: 100%;
+    box-sizing: border-box;
   }
   input[type="number"]:focus{ outline: 2px solid var(--yellow); outline-offset: 1px; }
   button.check{
@@ -467,7 +476,7 @@
       margin-bottom: 0.59rem;
     }
     .rank-badge{ font-size: 0.528rem; padding: 0.18rem 0.54rem; flex-shrink: 0; }
-    .rank-phrase{ font-size: 0.48rem; width: 100%; text-align: center; }
+    .rank-phrase{ font-size: 0.456rem; width: 100%; text-align: center; margin-top: 0; }
 
     /* niente più colonne fisse: un blocco solo, la griglia occupa tutta la larghezza del contenitore */
     .level-layout{
@@ -494,7 +503,7 @@
     }
     .side-panel > div:first-child{ grid-column: 1; grid-row: 2; }
     .answer-row{ display: contents; }
-    .answer-row input[type="number"]{
+    .answer-row .answer-input-wrap{
       grid-column: 1;
       grid-row: 1;
       width: 100%;
@@ -1129,7 +1138,9 @@
             <div class="picked-row" id="pickedRow"></div>
           </div>
           <div class="answer-row">
-            <input type="number" id="answerInput" placeholder="Sum of the primes" inputmode="numeric">
+            <div class="answer-input-wrap">
+              <input type="number" id="answerInput" placeholder="Sum of the primes" inputmode="numeric">
+            </div>
             <button class="check" id="checkBtn"><span class="check-label">${checkLabelHtml}</span></button>
           </div>
           <p class="feedback" id="feedback"></p>
