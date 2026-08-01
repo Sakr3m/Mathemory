@@ -233,7 +233,8 @@
      dimenticarlo su uno nuovo in futuro, il rientro vive UNA VOLTA SOLA qui, come
      padding: ogni figlio lo eredita automaticamente, gratis, senza bisogno di
      nessuna regola propria */
-  .erato-leaderboard-half .lb-half{
+  .erato-leaderboard-half .lb-half,
+  .erato-leaderboard-half .erato-rules-preview{
     padding-left: 15%;
     box-sizing: border-box;
   }
@@ -424,14 +425,14 @@
     justify-content:center;
     font-family:'Space Mono', monospace;
     font-size: 1.65rem;
+    font-weight:700;
   }
 
-  .mc.composite{ color: rgba(243,239,228,0.22); }
+  .mc.composite{ color: var(--ink); }
   .mc.prime{
-    font-weight:700;
     border-radius: 6px;
     animation: mc-light-up 1s ease forwards;
-    animation-delay: calc(var(--i) * 750ms + 3.5s);
+    animation-delay: calc(var(--i) * 2000ms + 3.5s);
   }
   @keyframes mc-light-up{
     from{ color: var(--ink); background: transparent; box-shadow: none; }
@@ -444,6 +445,15 @@
 
   @media (prefers-reduced-motion: reduce){
     .mc.prime{ animation:none; color:#1C1F16; background:var(--yellow); box-shadow: 0 0 8px 1px var(--yellow), 0 0 20px 5px var(--yellow); }
+  }
+
+  /* su mobile l'accensione non parte da un timer fisso dalla creazione della card
+     (lì non c'è nessuna animazione di apertura da dover attendere), ma da quando la
+     schermata di Eratostene entra in vista: la gestisce interamente il JS
+     (startMobileMiniSievePreview), quindi l'animazione CSS automatica va disattivata
+     qui, altrimenti scatterebbe comunque in background al primo caricamento */
+  @media (max-width: 900px){
+    .mobile-preview-block .mc.prime{ animation: none; }
   }
 
   @media (min-width: 901px){
@@ -493,10 +503,15 @@
   .erato-rules-preview{
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: stretch;
-    gap: 1rem;
+    gap: 0.65rem;
     height: 100%;
+    /* l'illustrazione del volto (.erato-face-img) è ancorata in basso e arriva fino
+       al 20.87% dell'altezza della card: questo spazio fisso (non percentuale — il
+       padding percentuale in CSS si calcola sulla larghezza, non sull'altezza, quindi
+       qui sarebbe stato inutile) tiene il testo sempre sopra di lei, senza sovrapporsi */
+    padding-bottom: 6.5rem;
     text-align: left;
     box-sizing: border-box;
   }
@@ -509,14 +524,14 @@
   }
   .erato-rules-preview p{
     font-family:'Work Sans', sans-serif;
-    font-size: 1.097rem;
-    line-height: 1.55;
+    font-size: 0.98rem;
+    line-height: 1.4;
     color: var(--ink);
     margin: 0;
   }
   .erato-rules-preview p.device-note-old{
     font-family:'Space Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.7125rem;
     line-height: normal;
     color: rgba(243,239,228,0.5);
   }
@@ -613,6 +628,14 @@
     color: rgba(243,239,228,0.5);
     margin-top: 0.35rem;
     line-height: 1.35;
+  }
+  /* le 4 strisce delle modalità devono avere tutte la stessa altezza, a
+     prescindere da quanto testo contengono (bloccata = solo nome + messaggio,
+     sbloccata = nome + descrizione + dettagli): altezza minima fissa +
+     align-items:center (già impostato su .mode-option) le centra dentro.
+     Solo desktop */
+  @media (min-width: 901px){
+    .mode-option{ min-height: 8.6rem; box-sizing: border-box; }
   }
   .mode-modal-footnote{
     font-family:'Space Mono', monospace;
@@ -773,7 +796,7 @@
   }
   .modal-footnotes p{
     font-family:'Space Mono', monospace;
-    font-size: 0.68rem;
+    font-size: 1.02rem; /* x1.5 rispetto a 0.68rem: nota del report bug più leggibile */
     color: var(--ink-faint);
     line-height: 1.4;
     text-align: left;
@@ -1608,7 +1631,7 @@
       <div class="snap-track" id="snapTrack">
         <section class="snap-section" id="snapIntro">
           <div class="mobile-shifted-content">
-            <span class="mark">Mathemory</span>
+            <span class="mark" aria-label="Mathemory"><span aria-hidden="true">Ma<span class="mark-sym mark-cross">✝</span>h<span class="mark-sym mark-sigma">Σ</span>m<span class="mark-sym mark-emptyset">∅</span>ry</span></span>
             <p class="subtitle">A collection of math games, unlocking one after another over time.<br><br>Each game has timed leaderboard modes and more relaxed modes just for fun.<br><br>Your progress is saved automatically, so you can always pick up right where you left off.</p>
             <button type="button" class="mobile-index-sound-btn audio-toggle-btn" aria-label="Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8 8 0 0 1 0 12"/></svg></button>
             <button type="button" class="mobile-report-btn" aria-label="Report a bug">Report bug</button>
@@ -1646,7 +1669,7 @@
     <button type="button" class="rules-close-btn" id="rulesCloseBtn" aria-label="Close">✕</button>
     <h3>Rules — Eratosthenes</h3>
     <p><strong>How to play:</strong> find the 5 hidden primes in the 5×5 grid, add up their values, enter the total. Correct answer = next level.</p>
-    <p><strong>Modes:</strong> each mode has its own rules on time limits and leaderboards — check them when choosing your mode.</p>
+    <p><strong>Modes:</strong> The Sieve, Prime Rush, Scholar's Glance, and Infinite Primes — each has its own rules, check them as you unlock and pick a mode.</p>
     <p><strong>Fair play:</strong> out of respect for all participants, please don't cheat.</p>
     <p><em>Happy prime hunting.</em></p>
   </div>
@@ -1703,10 +1726,12 @@
                        26, 44, 20, 16, 25];
     const primeIdx = [1, 7, 10, 13, 4];
     let html = '';
+    let primeRank = 0; // 0,1,2,3,4 nell'ordine in cui i primi compaiono in griglia (non la posizione grezza): serve per un gap reale di 2s tra un'accensione e l'altra, vedi --i sotto
     values.forEach((v, i) => {
       const isPrime = primeIdx.includes(i);
       if (isPrime){
-        html += `<div class="mc prime" style="--i:${i}">${v}</div>`;
+        html += `<div class="mc prime" style="--i:${primeRank}">${v}</div>`;
+        primeRank++;
       } else {
         html += `<div class="mc composite">${v}</div>`;
       }
@@ -1760,10 +1785,10 @@
       hrefKey: 'erato_basic_last', hrefBase: 'eratostene_thesieve.html',
       preview: buildMiniSieve(),
       modes: [
-        { name: "Scholar's Glance", desc: 'The hardest run of them all, with its own personal leaderboard.', details: 'Personal leaderboard · numbers fade fast, use Sight wisely. Unlocks after finishing The Sieve.', file: 'eratostene_scholarsglance.html', hrefKey: 'erato_scholarsglance_last', accent: 'red', requiresSieveFinish: true },
-        { name: 'Prime Rush', desc: '100 levels, a different combination each time, no unlocks holding you back.', details: 'Free leaderboard, no time limit · re-enter every run. Unlocks after finishing The Sieve.', file: 'eratostene_primerush.html', hrefKey: 'erato_primerush_last', accent: 'orange', requiresSieveFinish: true },
-        { name: 'The Sieve', desc: 'The full 200-level race, at your own pace, ranked on the main leaderboard.', details: '~21-day race · podium once per device · anti-cheat active.', file: 'eratostene_thesieve.html', hrefKey: 'erato_basic_last', accent: 'yellow' },
-        { name: 'Infinite Primes', desc: 'Endless levels, no leaderboard, just you and the numbers.', details: 'No leaderboard · no timer · progress saved. Unlocks after finishing The Sieve.', file: 'eratostene_infiniteprimes.html', hrefKey: 'erato_infinite_last', accent: 'teal', requiresSieveFinish: true },
+        { name: "Scholar's Glance", desc: '50 levels of total concentration.', details: 'No time limit · progress saved · podium once per device.', file: 'eratostene_scholarsglance.html', hrefKey: 'erato_scholarsglance_last', accent: 'red', requiresSieveFinish: true },
+        { name: 'Prime Rush', desc: '100 levels of pure racing against the clock, against other players.', details: 'No time limit · no progress saved · podium once per device.', file: 'eratostene_primerush.html', hrefKey: 'erato_primerush_last', accent: 'orange', requiresSieveFinish: true },
+        { name: 'The Sieve', desc: 'The full 200-level race, at your own pace, ranked on the main leaderboard.', details: 'Time-limited race · progress saved · podium once per device · anti-cheat active.', file: 'eratostene_thesieve.html', hrefKey: 'erato_basic_last', accent: 'yellow' },
+        { name: 'Infinite Primes', desc: 'Endless levels, no leaderboard, just you and the numbers.', details: 'No leaderboard · progress saved.', file: 'eratostene_infiniteprimes.html', hrefKey: 'erato_infinite_last', accent: 'teal', requiresSieveFinish: true },
       ]
     },
   ];
@@ -1858,6 +1883,7 @@
   // SEZIONE: STATO GLOBALE — carosello, cache altezza/classifiche
   // ============================================================
   let currentIndex = 0;
+  let lastMobileGameIndex = null; // null forza la prima costruzione; da lì in poi si ricostruisce solo se currentIndex cambia davvero
   const maxIndex = games.length - 1;
   // per ora si può navigare solo fino a Game 2: niente promesse sugli altri 10 finché non vediamo come va
   const NAV_LIMIT_INDEX = 1;
@@ -2296,11 +2322,34 @@
     const snapGame = document.getElementById('snapGame');
     const snapLeaderboard = document.getElementById('snapLeaderboard');
     if (snapGame && snapLeaderboard){
-      snapGame.innerHTML = mobileGameSectionHtml(g, number);
+      // il markup di mobileGameSectionHtml dipende SOLO da g/number (quindi da
+      // currentIndex), mai dai dati di classifica: ricostruirlo a ogni render() —
+      // anche quando currentIndex non è cambiato affatto (resize, arrivo dati
+      // classifica, barra indirizzi che si nasconde/mostra scrollando: tutte cose
+      // che richiamano render() senza che l'utente abbia mai lasciato la pagina) —
+      // distruggeva e ricreava anche le celle del mini-sieve a metà sequenza,
+      // interrompendo l'accensione dei primi ogni volta. Ora si ricostruisce solo
+      // quando la pagina è davvero cambiata
+      if (lastMobileGameIndex !== currentIndex){
+        lastMobileGameIndex = currentIndex;
+        snapGame.innerHTML = mobileGameSectionHtml(g, number);
+        document.querySelectorAll('.mobile-prev').forEach(el => el.onclick = () => step(-1));
+        document.querySelectorAll('.mobile-next').forEach(el => el.onclick = () => step(1));
+      }
+      // questa invece dipende dai dati di classifica: va sempre aggiornata
       snapLeaderboard.innerHTML = mobileLeaderboardSectionHtml(g);
 
-      document.querySelectorAll('.mobile-prev').forEach(el => el.onclick = () => step(-1));
-      document.querySelectorAll('.mobile-next').forEach(el => el.onclick = () => step(1));
+      // ingresso/uscita dalla schermata di Eratostene su mobile: ora che il DOM sopra
+      // non viene più ricostruito se currentIndex resta lo stesso, questo scatta solo
+      // su una vera navigazione, mai su un render() incidentale
+      const nowInMobileErato = window.innerWidth <= 900 && currentIndex === 0 && gameState(g) === 'open';
+      if (nowInMobileErato && !mobileEratoInView){
+        mobileEratoInView = true;
+        startMobileMiniSievePreview();
+      } else if (!nowInMobileErato && mobileEratoInView){
+        mobileEratoInView = false;
+        stopMobileMiniSievePreview();
+      }
     }
   }
 
@@ -2552,10 +2601,58 @@
         cells.forEach((c, i) => {
           void c.offsetWidth; // forzo il reflow prima di far ripartire l'animazione
           c.style.animation = 'mc-light-up 1s ease forwards';
-          c.style.animationDelay = `${i * 750}ms`;
+          c.style.animationDelay = `${i * 2000}ms`;
         });
       }, 1000);
     }, 30000);
+  }
+
+  // --- stessa anteprima, ma su mobile: niente animazione di apertura da attendere,
+  // quindi il via lo dà l'ingresso nella schermata (verticale) di Eratostene, non un
+  // timer fisso dalla creazione della card. Il clock (setTimeout/setInterval) resta
+  // sempre valido a prescindere da quante volte il DOM sotto viene ricreato: per
+  // questo le celle vengono ricercate di nuovo a ogni tick invece di essere salvate
+  // una volta sola
+  let mobileEratoInView = false;
+  let mobileMiniSieveTimers = [];
+
+  function clearMobileMiniSieveTimers(){
+    mobileMiniSieveTimers.forEach(id => { clearTimeout(id); clearInterval(id); });
+    mobileMiniSieveTimers = [];
+  }
+
+  function mobileMiniSieveCells(){
+    return Array.from(document.querySelectorAll('#snapGame .mc.prime'));
+  }
+
+  function lightMobileMiniSieveCells(){
+    mobileMiniSieveCells().forEach((c, i) => {
+      c.style.animation = 'none';
+      void c.offsetWidth; // stesso reflow forzato usato sopra, stesso motivo
+      c.style.animation = 'mc-light-up 1s ease forwards';
+      c.style.animationDelay = `${i * 2000}ms`;
+    });
+  }
+
+  function startMobileMiniSievePreview(){
+    clearMobileMiniSieveTimers();
+    // primo giro: il primo primo si accende 2.5s dopo l'ingresso nella schermata
+    const t1 = setTimeout(() => {
+      lightMobileMiniSieveCells();
+      // da qui in poi stesso identico reset ogni 30s del loop desktop
+      const intervalId = setInterval(() => {
+        mobileMiniSieveCells().forEach(c => { c.style.animation = 'none'; });
+        const t2 = setTimeout(lightMobileMiniSieveCells, 1000);
+        mobileMiniSieveTimers.push(t2);
+      }, 30000);
+      mobileMiniSieveTimers.push(intervalId);
+    }, 2500);
+    mobileMiniSieveTimers.push(t1);
+  }
+
+  function stopMobileMiniSievePreview(){
+    clearMobileMiniSieveTimers();
+    mobileMiniSieveCells().forEach(c => { c.style.animation = 'none'; }); // spegne subito, niente coda residua se si torna prima che scada un timer
   }
 
   // misura e posiziona tutto ciò che dipende dalla larghezza FINALE della card
@@ -2649,7 +2746,7 @@
         <div class="erato-rules-preview">
           <h3>Rules</h3>
           <p><strong>How to play:</strong> find the 5 hidden primes in the 5×5 grid, add up their values, enter the total. Correct answer = next level.</p>
-          <p><strong>Modes:</strong> each mode has its own rules on time limits and leaderboards — check them when choosing your mode.</p>
+          <p><strong>Modes:</strong> The Sieve, Prime Rush, Scholar's Glance, and Infinite Primes — each has its own rules, check them as you unlock and pick a mode.</p>
           <p><strong>Fair play:</strong> out of respect for all participants, please don't cheat.</p>
           <p>Happy prime hunting.</p>
           <p class="device-note-old">Progress is saved per device — switching devices restarts from level 1.</p>
@@ -3158,7 +3255,6 @@
           <div class="mode-option mode-option-locked" style="--mode-color: var(--${m.accent})">
             <div class="mode-option-text">
               <h4>${m.name}</h4>
-              <p>${m.desc}</p>
               <p class="mode-option-details">${lockMessage}</p>
             </div>
           </div>`;

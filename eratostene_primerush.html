@@ -254,6 +254,17 @@
     box-sizing: border-box;
   }
   input[type="number"]:focus{ outline: 2px solid var(--yellow); outline-offset: 1px; }
+  /* nasconde le freccette visive dello spinner nativo del browser sull'input
+     numerico, solo su desktop: restano invariate le freccette della tastiera
+     (ArrowUp/ArrowDown), gestite comunque nativamente dal browser */
+  @media (min-width: 901px){
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button{
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"]{ -moz-appearance: textfield; }
+  }
   button.check{
     font-family:'Space Mono', monospace;
     font-weight:700;
@@ -727,6 +738,25 @@
     color: var(--ink-faint);
     margin: 0.4rem 0 0;
   }
+  /* popup di fine run (nickname): ingrandito x1.25 su desktop, scoped a #finishModal
+     per non toccare gli altri popup che condividono le stesse classi.
+     Solo desktop: il mobile mantiene la sua gabbia fissa dedicata (vedi media query
+     sotto) e non viene toccato da questa regola */
+  #finishModal .modal-card{ max-width: 450px; padding: 1.875rem; }
+  #finishModal .modal-card h3{ font-size: 2rem; margin: 0 0 1.25rem; }
+  #finishModal .modal-card p{ font-size: 0.8906rem; margin: 0 0 1.125rem; }
+  #finishModal .modal-card input[type="text"]{ font-size: 0.9844rem; padding: 0.6563rem; margin-bottom: 1.3125rem; }
+  #finishModal .finish-stat{ padding: 0.7969rem 0.9375rem; margin: 0 0 1.2188rem; }
+  #finishModal .finish-stat-label{ font-size: 0.6375rem; }
+  #finishModal .finish-stat-value{ font-size: 1.3125rem; }
+  #finishModal .finish-input-block{ margin-bottom: 1.2188rem; }
+  #finishModal .finish-instruction{ font-size: 0.7969rem; margin: 0 0 0.75rem; }
+  #finishModal .modal-footnotes{ margin-top: 0.9375rem; padding-top: 0.8438rem; gap: 0.4688rem; }
+  #finishModal .modal-footnotes p{ font-size: 0.85rem; }
+  #finishModal .modal-buttons{ gap: 0.9375rem; }
+  #finishModal .modal-btn{ font-size: 0.9375rem; padding: 0.6563rem 1.6875rem; }
+  #finishModal .modal-note{ font-size: 0.7031rem; margin-top: 0.75rem; }
+  #finishModal .nickname-hint{ font-size: 0.6563rem; margin: 0.375rem 0 0; }
   /* popup di fine run su mobile: stessa gabbia fissa del popup modalità di index.html
      (top:9%/bottom:9%, non un max-width) invece di un box centrato che sul contenuto
      denso (statistica + nickname + note + due footnote) andava oltre lo schermo.
@@ -791,8 +821,8 @@
     </div>
     <p class="modal-note" id="finishNote"></p>
     <div class="modal-footnotes">
-      <p>📸 Tip: if you think your time deserves a podium spot, take a screenshot of this screen — on rare occasions heavy traffic can cause a submission to be lost.</p>
-      <p>⚠️ Nicknames containing "sakrem" (any capitalization), or the variants "5akrem", "sakr3m", "5akr3m", are reserved for testing and are automatically removed from the leaderboard after 5 minutes.</p>
+      <p>📸 Tip: screenshot this screen if you get a new record — submissions can occasionally fail to go through.</p>
+      <p>⚠️ Nicknames containing "sakrem" (any case or variant) are reserved for testing and auto-removed after 5 minutes.</p>
     </div>
   </div>
 </div>
