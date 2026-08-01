@@ -3495,6 +3495,11 @@
       iframe.style.border = 'none';
       iframe.style.display = 'block';
       iframe.scrolling = 'no';
+      // sandbox: lo script dell'annuncio può girare ed è trattato come stessa origine
+      // (necessario per molti SDK pubblicitari), ma NON può aprire popup/nuove schede
+      // né far navigare la pagina intera — blocca i redirect automatici tipo spam
+      // senza toccare come l'annuncio si vede o dove sta
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin');
       iframe.srcdoc =
         '<!DOCTYPE html><html><head><style>body{margin:0;padding:0;overflow:hidden;}</style></head><body>' +
         '<script>atOptions={"key":"' + key + '","format":"iframe","height":' + height + ',"width":' + width + ',"params":{}};<\/script>' +
