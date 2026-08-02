@@ -1159,7 +1159,9 @@
       opacity: 0; /* diventa visibile quando il gate finisce (vedi initIntroGate); fade, non scatto */
       transition: opacity 0.7s ease;
     }
-    #introGateMark{ font-size: clamp(1.8rem, 11vw, 3rem); white-space: nowrap; }
+    #introGate{ text-align: center; }
+    #introGateMark{ font-size: clamp(1.8rem, 11vw, 3rem); white-space: nowrap; width: 100%; text-align: center; transform: translateY(-10vh); }
+    #introGateNote{ width: 100%; text-align: center; transform: translateY(-10vh); }
     .intro-gate-note-desktop{ display: none; }
     .intro-gate-note-mobile{ display: inline; }
     #snapIntro .subtitle{
@@ -1462,6 +1464,7 @@
       transform: translateY(0.28125px); /* per portare il centro del titolo esattamente a 127px dal bordo alto */
     }
     #introGateMark{ font-size: clamp(5rem, 11vw, 11rem); }
+    #introGateNote{ font-size: 1.7rem; }
     .index-sound-btn{
       position: absolute;
       flex-shrink: 0;
@@ -3557,7 +3560,13 @@
       // se il browser lo concede (vedi mathemory-audio.js, MATHEMORY_DEFER_AUDIO_INIT)
       if (window.MathemoryAudio && window.MathemoryAudio.init) window.MathemoryAudio.init();
 
-      if (gateNote) gateNote.style.opacity = '0';
+      const isMobileNow = window.innerWidth <= 900;
+      // su desktop la nota scompare subito, senza dissolvenza, appena si preme il
+      // titolo; su mobile resta com'era (sfuma insieme al titolo del gate)
+      if (gateNote){
+        if (isMobileNow) gateNote.style.opacity = '0';
+        else gateNote.style.display = 'none';
+      }
 
       // sblocca lo scroll (bloccato di default, vedi html.intro-gate-active) e i
       // simboli fluttuanti di sfondo, prima nascosti insieme al resto della chrome
@@ -3569,7 +3578,6 @@
       // titolo vero (desktop o mobile a seconda dello schermo): misurato ORA, mentre è
       // ancora invisibile ma già nella sua posizione finale definitiva — il layout non
       // dipende dall'opacità — così il titolo del gate sa esattamente dove atterrare
-      const isMobileNow = window.innerWidth <= 900;
       const realMark = isMobileNow
         ? document.querySelector('#snapIntro .mark')
         : document.querySelector('.title-row .mark');
@@ -3596,6 +3604,14 @@
           gateMark.style.top = fromRect.top + 'px';
           gateMark.style.width = fromRect.width + 'px';
           gateMark.style.margin = '0';
+          // sganciato da #introGate: anche con position:fixed, un figlio eredita
+          // l'opacità del genitore (l'elemento con opacity<1 diventa il containing
+          // block dei suoi discendenti fixed) — la dissolvenza separata dello sfondo
+          // del gate lo faceva sparire a metà viaggio, indipendentemente da qualunque
+          // timer impostato qui sotto. Spostandolo su body, il viaggio resta suo e
+          // basta, indipendente da qualunque altra dissolvenza
+          document.body.appendChild(gateMark);
+          gateMark.style.zIndex = '41';
           void gateMark.offsetWidth; // forza il reflow prima di far partire la transizione
           gateMark.style.transition = 'transform 1.5s ease';
           gateMark.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
@@ -3612,18 +3628,32 @@
       // lo sfondo del gate si dissolve con un pelino di anticipo sul taglio finale
       // (stessa tempistica di arrivo, solo un ingresso più morbido invece di uno scatto).
       // Su mobile il titolo vero parte a dissolversi insieme, in sincrono col fade out
-      // del titolo del gate impostato sopra. Su desktop il titolo vero resta sincronizzato
-      // ESATTAMENTE con la fine del viaggio del titolo del gate: prima sarebbe una doppia
-      // immagine (il vero già visibile mentre quello del gate sta ancora atterrando)
+      // del titolo del gate impostato sopra
       setTimeout(() => {
         gate.style.opacity = '0';
         if (isMobileNow && realMark) realMark.style.opacity = '1';
       }, isMobileNow ? 800 : 1000);
 
-      setTimeout(() => {
-        gate.style.display = 'none';
-        if (!isMobileNow && realMark) realMark.style.opacity = '1';
-      }, 1500);
+      if (!isMobileNow){
+        // il titolo vero compare istantaneo (niente fade in) esattamente a 1.5s,
+        // quando il pulsante ha finito il suo viaggio (solo posizione/scala, mai
+        // sfumato durante il tragitto)
+        setTimeout(() => {
+          if (realMark) realMark.style.opacity = '1';
+        }, 1500);
+        // il pulsante, ormai ridondante, inizia a sfumare via appena arrivato
+        setTimeout(() => {
+          gateMark.style.transition = 'opacity 1s ease';
+          gateMark.style.opacity = '0';
+        }, 1500);
+        setTimeout(() => {
+          gate.style.display = 'none';
+        }, 2500);
+      } else {
+        setTimeout(() => {
+          gate.style.display = 'none';
+        }, 1500);
+      }
     });
   }
   initIntroGate();
