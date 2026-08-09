@@ -805,7 +805,7 @@
       <span class="finish-stat-value" id="finishTotalTime"></span>
     </div>
     <div class="finish-input-block">
-      <p class="finish-instruction" data-en="Enter a nickname to be remembered for this race — it will be sent for the leaderboard." data-it="Inserisci un nickname per essere ricordato in questa gara — verrà inviato per la classifica.">Enter a nickname to be remembered for this race — it will be sent for the leaderboard.</p>
+      <p class="finish-instruction" data-en="Enter a nickname to be remembered for this race — it will be sent for the leaderboard." data-it="Inserisci un nickname per essere ricordato in questa gara: verrà inviato per la classifica.">Enter a nickname to be remembered for this race — it will be sent for the leaderboard.</p>
       <input type="text" id="finishNickname" maxlength="12" placeholder="Your nickname" data-placeholder-en="Your nickname" data-placeholder-it="Il tuo nickname">
       <p class="nickname-hint" data-en="3 to 12 characters. Letters, numbers, spaces, - _ . only (any language/alphabet is fine)." data-it="Da 3 a 12 caratteri. Solo lettere, numeri, spazi, - _ . (qualsiasi lingua/alfabeto va bene).">3 to 12 characters. Letters, numbers, spaces, - _ . only (any language/alphabet is fine).</p>
     </div>
@@ -815,7 +815,7 @@
     </div>
     <p class="modal-note" id="finishNote"></p>
     <div class="modal-footnotes">
-      <p data-en="📸 Tip: screenshot this screen if you get a new record — submissions can occasionally fail to go through." data-it="📸 Consiglio: fai uno screenshot di questa schermata se ottieni un nuovo record — l'invio può occasionalmente non andare a buon fine.">📸 Tip: screenshot this screen if you get a new record — submissions can occasionally fail to go through.</p>
+      <p data-en="📸 Tip: screenshot this screen if you get a new record — submissions can occasionally fail to go through." data-it="📸 Consiglio: fai uno screenshot di questa schermata se ottieni un nuovo record: a volte l'invio non va a buon fine.">📸 Tip: screenshot this screen if you get a new record — submissions can occasionally fail to go through.</p>
       <p data-en="⚠️ Nicknames containing &quot;sakrem&quot; (any case or variant) are reserved for testing and auto-removed after 5 minutes." data-it="⚠️ I nickname che contengono &quot;sakrem&quot; (in qualsiasi variante) sono riservati ai test e vengono rimossi automaticamente dopo 5 minuti.">⚠️ Nicknames containing "sakrem" (any case or variant) are reserved for testing and auto-removed after 5 minutes.</p>
     </div>
   </div>
@@ -1143,10 +1143,10 @@
 
   // --- titoli di rango, a salire per livello raggiunto ---
   const RANKS = [
-    { level: 150, title: 'Master of the Sieve', phrase: "You've mastered the sieve itself." },
-    { level: 75,  title: 'Geometer of Primes', phrase: 'Few see the structure beneath the primes as clearly as you.' },
-    { level: 25,  title: 'Pattern Seeker', phrase: 'The patterns are starting to reveal themselves.' },
-    { level: 10,  title: 'Apprentice of Cyrene', phrase: 'A student of Cyrene, taking your first true steps.' },
+    { level: 150, title: 'Master of the Sieve', titleIT: 'Maestro del Setaccio', phrase: "You've mastered the sieve itself.", phraseIT: 'Hai padroneggiato il setaccio stesso.' },
+    { level: 75,  title: 'Geometer of Primes', titleIT: 'Geometra dei Primi', phrase: 'Few see the structure beneath the primes as clearly as you.', phraseIT: 'Pochi vedono la struttura dei primi con la tua stessa chiarezza.' },
+    { level: 25,  title: 'Pattern Seeker', titleIT: 'Cercatore di Schemi', phrase: 'The patterns are starting to reveal themselves.', phraseIT: 'Gli schemi iniziano a rivelarsi.' },
+    { level: 10,  title: 'Apprentice of Cyrene', titleIT: 'Apprendista di Cirene', phrase: 'A student of Cyrene, taking your first true steps.', phraseIT: 'Uno studente di Cirene, ai tuoi primi veri passi.' },
   ];
   function rankForLevel(lvl){
     return RANKS.find(r => lvl >= r.level) || null;
@@ -1241,14 +1241,16 @@
 
     const h1El = document.getElementById('levelTitle');
     h1El.className = 'lv-digits-' + String(levelNum).length;
-    const levelWord = currentLang() === 'it' ? 'Livello' : 'Level';
+    const isIT = currentLang() === 'it';
+    const levelWord = isIT ? 'Livello' : 'Level';
+    const eratoWord = isIT ? 'Eratostene' : 'Eratosthenes';
     h1El.innerHTML =
-      `Eratosthenes <span class="accent">·</span> The Sieve <span class="accent">·</span> ${levelWord} ${levelNum}`;
+      `${eratoWord} <span class="accent">·</span> The Sieve <span class="accent">·</span> ${levelWord} ${levelNum}`;
 
     const rankCalloutEl = document.getElementById('rankCallout');
     rankCalloutEl.classList.toggle('no-rank', !rankInfo);
     rankCalloutEl.innerHTML = rankInfo
-      ? `<span class="rank-badge">${rankInfo.title}</span><span class="rank-phrase">${rankInfo.phrase}</span>`
+      ? `<span class="rank-badge">${isIT ? rankInfo.titleIT : rankInfo.title}</span><span class="rank-phrase">${isIT ? rankInfo.phraseIT : rankInfo.phrase}</span>`
       : `<span class="rank-badge">Placeholder rank</span><span class="rank-phrase">Placeholder phrase text goes here.</span>`;
 
     document.getElementById('levelLayout').innerHTML = `
