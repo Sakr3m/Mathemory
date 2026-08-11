@@ -45,6 +45,38 @@
 
   *{ box-sizing: border-box; }
 
+  /* effetto luce del pulsante Ko-fi (desktop + mobile): tutto il pulsante si illumina
+     come una cella selezionata nella griglia dei giochi (stesso sfondo/bordo/bagliore
+     di .cell.selected). La classe kofi-blink è scritta direttamente nell'HTML. Va
+     tenuto FUORI da qualunque media query: .index-kofi-btn esiste solo su desktop e
+     .mobile-kofi-btn solo su mobile, ma servono entrambi lo stesso trattamento */
+  @keyframes kofi-led{
+    0%, 100%{
+      background-color: var(--bg-panel);
+      border-color: var(--rule);
+      color: var(--ink-dim);
+      box-shadow: none;
+    }
+    20%{
+      background-color: var(--yellow);
+      border-color: var(--yellow);
+      color: #1C1F16;
+      box-shadow: 0 0 8px 1px var(--yellow), 0 0 20px 5px var(--yellow);
+    }
+    40%{
+      background-color: var(--bg-panel);
+      border-color: var(--rule);
+      color: var(--ink-dim);
+      box-shadow: none;
+    }
+  }
+  /* come se qualcuno premesse un numero della griglia: si accende una volta sola per
+     ciclo, con una dissolvenza morbida di 1s sia in entrata sia in uscita (mai un
+     lampo secco), poi una pausa di 3s prima di riaccendersi — ciclo totale 5s */
+  .index-kofi-btn.kofi-blink, .mobile-kofi-btn.kofi-blink{
+    animation: kofi-led 5s ease-in-out infinite;
+  }
+
   html, body{
     margin:0;
     padding:0;
@@ -757,6 +789,9 @@
     border-radius: 6px;
     padding: 0.7rem 1.8rem;
     cursor:pointer;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
   }
   .modal-btn.yes{ background: var(--yellow); color: var(--bg); }
   .modal-btn.no{ background: transparent; color: var(--ink-dim); border: 1px solid var(--rule); }
@@ -1484,6 +1519,20 @@
     #reportModal #reportNote{ font-size: 0.62rem; margin: 0.5rem 0 0; }
     #reportModal .modal-footnotes{ margin-top: 0.5rem; padding-top: 0.5rem; }
     #reportModal .modal-footnotes p{ font-size: 0.62rem; line-height: 1.25; }
+
+    /* popup Ko-fi su mobile: stessa filosofia di #reportModal qui sopra */
+    #kofiModal .rules-modal-card{
+      max-width: calc(100% - 2rem);
+      width: auto;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.45rem 1.3rem;
+      box-sizing: border-box;
+    }
+    #kofiModal .rules-modal-card h3{ font-size: 1.2rem; margin: 0 0 0.85rem; }
+    #kofiModal .rules-modal-card p{ font-size: 0.86rem; line-height: 1.45; margin: 0 0 0.85rem; }
+    #kofiModal .modal-buttons{ gap: 0.6rem; margin: 0.9rem 0 0; flex-wrap: wrap; }
+    #kofiModal .modal-btn{ font-size: 0.78rem; padding: 0.55rem 1rem; max-width: 45%; white-space: normal; line-height: 1.3; }
   }
 
   /* --- blocco orizzontale: nasconde tutto e mostra un avviso finché il telefono non torna verticale --- */
@@ -1780,7 +1829,7 @@
         <button type="button" class="lang-switch-btn" id="langBtnEn" data-lang="en">EN</button>
         <button type="button" class="lang-switch-btn" id="langBtnIt" data-lang="it">IT</button>
       </div>
-      <a class="index-kofi-btn" id="indexKofiBtn" href="https://ko-fi.com/the_forgotten_shelf" target="_blank" rel="noopener" aria-label="Ko-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></a>
+      <button type="button" class="index-kofi-btn kofi-blink" id="indexKofiBtn" aria-label="Ko-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></button>
       <button type="button" class="index-info-btn" id="indexInfoBtn" aria-label="Info">i</button>
       <button type="button" class="index-report-btn" id="indexReportBtn" aria-label="Report a bug" data-en="Report bug" data-it="Segnala bug">Report bug</button>
       <span class="mark" aria-label="Mathemory"><span aria-hidden="true">Ma<span class="mark-sym mark-cross">✝</span>h<span class="mark-sym mark-sigma">Σ</span>m<span class="mark-sym mark-emptyset">∅</span>ry</span></span>
@@ -1836,7 +1885,7 @@
                 <button type="button" class="lang-switch-btn" data-lang="en">EN</button>
                 <button type="button" class="lang-switch-btn" data-lang="it">IT</button>
               </div>
-              <a class="mobile-kofi-btn" href="https://ko-fi.com/the_forgotten_shelf" target="_blank" rel="noopener" aria-label="Ko-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></a>
+              <button type="button" class="mobile-kofi-btn kofi-blink" id="mobileKofiBtn" aria-label="Ko-fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></button>
             </div>
             <button type="button" class="mobile-report-btn" aria-label="Report a bug" data-en="Report bug" data-it="Segnala bug">Report bug</button>
             <p class="scroll-hint" data-en="↓ Scroll down to explore the games and the rest of the site. ↓" data-it="↓ Scorri giù per esplorare i giochi e il resto del sito. ↓">↓ Scroll down to explore the games and the rest of the site. ↓</p>
@@ -1865,6 +1914,21 @@
     <h3 data-en="Choose your mode" data-it="Scegli la modalità">Choose your mode</h3>
     <div class="mode-options" id="modeOptions"></div>
     <p class="mode-modal-footnote" data-en="Exit via 🏠 Home, not by closing the page abruptly." data-it="Esci tramite 🏠 Home, non chiudendo la pagina bruscamente.">Exit via 🏠 Home, not by closing the page abruptly.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="kofiModal">
+  <div class="rules-modal-card">
+    <button type="button" class="rules-close-btn" id="kofiCloseBtn" aria-label="Close">✕</button>
+    <h3 data-en="About the ads" data-it="A proposito delle pubblicità">About the ads</h3>
+    <p data-en="Mathemory runs a few ads. They help me recoup at least some of the time I've put into building all this, and maybe earn a little something along the way." data-it="Su Mathemory ci sono alcune pubblicità. Servono a farmi rientrare almeno in parte del tempo che ci ho messo a costruire tutto questo, e magari a guadagnarci anche qualcosa.">Mathemory runs a few ads. They help me recoup at least some of the time I've put into building all this, and maybe earn a little something along the way.</p>
+    <p data-en="If you have an ad blocker, I'd be grateful if you left it off here — it really does make a difference." data-it="Se usi un'estensione che blocca le pubblicità, ti sarei grato se la disattivassi qui: fa davvero la differenza.">If you have an ad blocker, I'd be grateful if you left it off here — it really does make a difference.</p>
+    <p data-en="If support on Ko-fi ever grew significant enough, I might decide to remove them entirely — though, to be fair, they've never been particularly intrusive." data-it="Se il supporto su Ko-fi dovesse diventare abbastanza importante, potrei decidere di toglierle del tutto, anche se va detto che non sono mai state particolarmente invadenti.">If support on Ko-fi ever grew significant enough, I might decide to remove them entirely — though, to be fair, they've never been particularly intrusive.</p>
+    <p data-en="If you'd like to support the project, the link is below. Either way, thanks for stopping by." data-it="Se ti va di sostenere il progetto, il link è qui sotto. In ogni caso, grazie di essere passato di qui.">If you'd like to support the project, the link is below. Either way, thanks for stopping by.</p>
+    <div class="modal-buttons">
+      <a class="modal-btn yes" href="https://ko-fi.com/the_forgotten_shelf" target="_blank" rel="noopener" data-en="Support on Ko-fi" data-it="Sostieni su Ko-fi">Support on Ko-fi</a>
+      <button type="button" class="modal-btn no" id="kofiMaybeLaterBtn" data-en="Maybe later" data-it="Magari più tardi">Maybe later</button>
+    </div>
   </div>
 </div>
 
@@ -3610,6 +3674,21 @@
   document.getElementById('infoCloseBtn').addEventListener('click', closeInfoModal);
   infoModal.addEventListener('click', (e) => {
     if (e.target === infoModal) closeInfoModal();
+  });
+
+  // stesso meccanismo di apertura/chiusura qui sopra, ma per il popup Ko-fi: sia il
+  // pulsante desktop sia quello mobile aprono lo stesso popup invece di portare
+  // subito al link. "Maybe later"/il tasto di chiusura chiudono e basta; il pulsante
+  // "Support on Ko-fi" dentro al popup è un link vero, nessuna logica extra necessaria
+  const kofiModal = document.getElementById('kofiModal');
+  function openKofiModal(){ playSound('tap'); kofiModal.classList.add('visible'); }
+  function closeKofiModal(){ playSound('tap'); kofiModal.classList.remove('visible'); }
+  document.getElementById('indexKofiBtn').addEventListener('click', openKofiModal);
+  document.getElementById('mobileKofiBtn').addEventListener('click', openKofiModal);
+  document.getElementById('kofiCloseBtn').addEventListener('click', closeKofiModal);
+  document.getElementById('kofiMaybeLaterBtn').addEventListener('click', closeKofiModal);
+  kofiModal.addEventListener('click', (e) => {
+    if (e.target === kofiModal) closeKofiModal();
   });
 
   // --- popup di scelta modalità (The Sieve / Prime Rush / Infinite Primes) ---
