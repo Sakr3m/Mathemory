@@ -490,6 +490,25 @@
     border-radius: 8px;
   }
 
+  .mini-triangle{
+    width: 306px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    padding: 0.9rem;
+    background: var(--bg-panel-locked);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .mini-triangle svg{ width: 100%; height: auto; display:block; }
+  .mini-triangle-formula{
+    margin: 0.5rem 0 0;
+    font-family:'Space Mono', monospace;
+    font-size: 0.95rem;
+    font-weight:700;
+    color: var(--yellow);
+  }
+
   .mc{
     position:relative;
     aspect-ratio:1;
@@ -682,12 +701,26 @@
     border-color: var(--rule);
   }
   .mode-option.mode-option-locked h4{ color: var(--ink-dim); }
+  .mode-option-title-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 0.6rem;
+    margin: 0 0 0.3rem;
+  }
   .mode-option-text h4{
     font-family:'Kalam', cursive;
     font-size: 1.25rem;
-    margin: 0 0 0.3rem;
+    margin: 0;
     color: var(--mode-color, var(--yellow));
   }
+  .mode-star-rating{
+    display:flex;
+    align-items:center;
+    gap: 0.12rem;
+    flex-shrink: 0;
+  }
+  .mode-star{ width: 15px; height: 15px; }
   .mode-option-text p{
     font-family:'Work Sans', sans-serif;
     font-size: 0.92rem;
@@ -760,6 +793,13 @@
     margin: 0 0 1rem;
   }
   .rules-modal-card p strong{ color: var(--ink); }
+  .rules-stars-note{
+    font-family:'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+    line-height: 1.5;
+    margin: 0 0 0.4rem;
+  }
   /* testolina di Eratostene nel popup Rules: stessa immagine della versione desktop
      (nell'anteprima a comparsa sopra la classifica), qui però ancorata in basso a
      DESTRA invece che al centro del divisore, perché il popup non ha due colonne.
@@ -1363,8 +1403,19 @@
       gap: 0.6rem;
     }
     .mobile-preview-block .mini-sieve{ width: auto; max-width: 196px; margin: 0; }
+    /* larghezza fissa a 122px: è la larghezza reale che il mini-setaccio raggiunge
+       naturalmente (grid a 5 colonne, si stringe da solo sul contenuto). Il triangolo
+       usa un <svg width:100%>, che invece si espande fino al max-width consentito —
+       senza questo fix restava molto più grande del setaccio, sbilanciando la card
+       (anteprima enorme, descrizione schiacciata a destra, testo tagliato su schermi
+       stretti) */
+    .mobile-preview-block .mini-triangle{ width: 122px; margin: 0; padding: 0.5rem; }
     /* il cerchio si scala già da solo col viewBox: la proporzione giusta è quella originale (r=21) */
     .mobile-preview-block .mc{ font-size: 0.91rem; }
+    /* stessa proporzione di riduzione usata sopra per i numeri del mini-setaccio
+       (1.65rem→0.91rem): prima restava alla dimensione desktop, il triangolo
+       sembrava più "grande" del setaccio a parità di larghezza del riquadro */
+    .mobile-preview-block .mini-triangle-formula{ font-size: 0.52rem; margin-top: 0.3rem; }
     .mobile-device-note-full{
       width: 100%;
       text-align: center;
@@ -1482,7 +1533,9 @@
     #modeModal .mode-modal-card h3{ font-size: 1.06875rem; margin: 0 0 0.7695rem; }
     #modeModal .mode-options{ gap: 0.513rem; }
     #modeModal .mode-option{ min-height: 6rem; padding: 0.5985rem 0.7695rem; gap: 0.513rem; box-sizing: border-box; }
-    #modeModal .mode-option-text h4{ font-size: 0.8721rem; margin: 0 0 0.12825rem; }
+    #modeModal .mode-option-title-row{ margin: 0 0 0.12825rem; gap: 0.4rem; }
+    #modeModal .mode-option-text h4{ font-size: 0.8721rem; margin: 0; }
+    #modeModal .mode-star{ width: 11px; height: 11px; }
     #modeModal .mode-option-text p{ font-size: 0.64125rem; line-height: 1.25; }
     #modeModal .mode-option-text p.mode-option-details{
       font-family:'Space Mono', monospace;
@@ -1938,7 +1991,18 @@
     <h3><span data-en="Rules" data-it="Regole">Rules</span> <span class="accent">·</span> <span data-en="Eratosthenes" data-it="Eratostene">Eratosthenes</span></h3>
     <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time." data-it="trova i 5 numeri primi nascosti nella griglia 5×5, somma i loro valori e inserisci il totale nella casella qui sotto. Una risposta corretta ti porta subito al livello successivo, quindi gioca con calma: ogni livello resta aperto per tutto il tempo che ti serve, senza alcuna penalità.">find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time.</span></p>
     <p><em data-en="Happy prime hunting." data-it="Buona caccia ai numeri primi.">Happy prime hunting.</em></p>
+    <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
     <img class="rules-modal-face-img" src="https://pub-312772d8d5f64507a7ad27b167cd19c4.r2.dev/eratostene_face.png" alt="">
+  </div>
+</div>
+
+<div class="modal-overlay" id="pythagorasRulesModal">
+  <div class="rules-modal-card">
+    <button type="button" class="rules-close-btn" id="pythagorasRulesCloseBtn" aria-label="Close">✕</button>
+    <h3><span data-en="Rules" data-it="Regole">Rules</span> <span class="accent">·</span> Pythagoras</h3>
+    <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="drag the two moving vertices until the triangle matches the measurements shown." data-it="trascina i due vertici mobili finché il triangolo non corrisponde alle misure indicate.">drag the two moving vertices until the triangle matches the measurements shown.</span></p>
+    <p><em data-en="Happy building." data-it="Buona costruzione.">Happy building.</em></p>
+    <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
   </div>
 </div>
 
@@ -2014,6 +2078,40 @@
     return `<div class="mini-sieve">${html}</div>`;
   }
 
+  // --- anteprima per la card di Pitagora: un triangolo rettangolo animato che
+  // simula il vero gioco. L'angolo retto resta fisso; l'angolo in alto si muove
+  // SOLO in verticale (x fissa) e quello a destra SOLO in orizzontale (y fissa),
+  // esattamente come i due vertici trascinabili in pitagora.html. A ogni fotogramma
+  // si muove UN SOLO angolo alla volta (mai insieme), in ordine casuale, con tempi
+  // irregolari tra un passaggio e l'altro — stesso ruolo visivo del mini-setaccio di
+  // Eratosthenes. Animazione SVG nativa (<animate>), nessun JS ---
+  function buildMiniTriangle(){
+    return `
+      <div class="mini-triangle">
+        <svg viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+          <polygon fill="rgba(232,196,104,0.14)" stroke="var(--yellow)" stroke-width="2">
+            <animate attributeName="points" dur="13s" repeatCount="indefinite" calcMode="spline"
+              keyTimes="0;0.0883;0.213;0.3018;0.4092;0.5248;0.6086;0.6715;0.77;0.8908;1"
+              keySplines="0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1; 0.45 0 0.55 1"
+              values="
+                15,105 15,20 125,105;
+                15,105 15,20 128.6,105;
+                15,105 15,22.5 128.6,105;
+                15,105 15,22.5 123.2,105;
+                15,105 15,18.4 123.2,105;
+                15,105 15,18.4 103.4,105;
+                15,105 15,18.4 115.9,105;
+                15,105 15,21.2 115.9,105;
+                15,105 15,21.2 118.9,105;
+                15,105 15,33.4 118.9,105;
+                15,105 15,20 125,105"/>
+          </polygon>
+          <rect x="15" y="91" width="14" height="14" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"/>
+        </svg>
+        <p class="mini-triangle-formula">a² + b² = c²</p>
+      </div>`;
+  }
+
   // le 11 date mostrate su ciascuna card "Coming Soon": la seconda card (il primo
   // "Coming Soon" dopo Eratosthenes) è il 1 agosto 2026, poi ogni data successiva è
   // +12 giorni di calendario uniformi (stesso schema di raceEndLabels/unlockLabels).
@@ -2050,7 +2148,7 @@
     return `${baseUrl}?n=${last}`;
   }
 
-  // --- una sola card attiva: Eratosthenes ---
+  // --- due card attive: Eratosthenes e Pitagora ---
   const games = [
     {
       title: 'Eratosthenes',
@@ -2064,10 +2162,28 @@
       hrefKey: 'erato_basic_v2_last', hrefBase: 'eratostene_thesieve.html',
       preview: buildMiniSieve(),
       modes: [
-        { name: "Scholar's Glance", desc: '50 levels of total concentration.', descIT: '50 livelli di pura concentrazione.', details: 'No time limit · progress saved.', detailsIT: 'Nessun limite di tempo · progressi salvati.', file: 'eratostene_scholarsglance.html', hrefKey: 'erato_scholarsglance_last', accent: 'red', requiresSieveFinish: true },
-        { name: 'Prime Rush', desc: '50 levels of pure racing against the clock, against other players.', descIT: '50 livelli di pura corsa contro il tempo, contro altri giocatori.', details: 'No time limit · no progress saved.', detailsIT: 'Nessun limite di tempo · progressi non salvati.', file: 'eratostene_primerush.html', hrefKey: 'erato_primerush_last', accent: 'orange', requiresSieveFinish: true },
-        { name: 'The Sieve', desc: 'The full 100-level race, at your own pace, ranked on the main leaderboard.', descIT: 'La gara completa di 100 livelli, al tuo ritmo, in classifica nella leaderboard principale.', details: 'Time-limited race · progress saved · anti-cheat active.', detailsIT: 'Gara a tempo limitato · progressi salvati · anti-cheat attivo.', file: 'eratostene_thesieve.html', hrefKey: 'erato_basic_v2_last', accent: 'yellow' },
-        { name: 'Infinite Primes', desc: 'Endless levels, no leaderboard, just you and the numbers.', descIT: 'Livelli infiniti, nessuna classifica, solo tu e i numeri.', details: 'No leaderboard · progress saved.', detailsIT: 'Nessuna classifica · progressi salvati.', file: 'eratostene_infiniteprimes.html', hrefKey: 'erato_infinite_last', accent: 'teal', requiresSieveFinish: true },
+        { name: "Scholar's Glance", desc: '50 levels of total concentration.', descIT: '50 livelli di pura concentrazione.', details: 'No time limit · progress saved.', detailsIT: 'Nessun limite di tempo · progressi salvati.', file: 'eratostene_scholarsglance.html', hrefKey: 'erato_scholarsglance_last', accent: 'red', requiresSieveFinish: true, stars: 3.5 },
+        { name: 'Prime Rush', desc: '50 levels of pure racing against the clock.', descIT: '50 livelli di pura corsa contro il tempo.', details: 'No time limit · no progress saved.', detailsIT: 'Nessun limite di tempo · progressi non salvati.', file: 'eratostene_primerush.html', hrefKey: 'erato_primerush_last', accent: 'orange', requiresSieveFinish: true, stars: 3 },
+        { name: 'The Sieve', desc: 'The full 100-level race, at your own pace, ranked on the main leaderboard.', descIT: 'La gara completa di 100 livelli, al tuo ritmo, in classifica nella leaderboard principale.', details: 'Time-limited race · progress saved · anti-cheat active.', detailsIT: 'Gara a tempo limitato · progressi salvati · anti-cheat attivo.', file: 'eratostene_thesieve.html', hrefKey: 'erato_basic_v2_last', accent: 'yellow', stars: 2.5 },
+        { name: 'Infinite Primes', desc: 'Endless levels, no leaderboard, just you and the numbers.', descIT: 'Livelli infiniti, nessuna classifica, solo tu e i numeri.', details: 'No leaderboard · progress saved.', detailsIT: 'Nessuna classifica · progressi salvati.', file: 'eratostene_infiniteprimes.html', hrefKey: 'erato_infinite_last', accent: 'teal', requiresSieveFinish: true, stars: 1.5 },
+      ]
+    },
+    {
+      title: 'Pythagoras',
+      titleIT: 'Pitagora',
+      descTitle: 'Right Triangle Game',
+      descTitleIT: 'Il gioco del triangolo rettangolo',
+      desc: 'Drag the two moving vertices to build the exact right triangle asked for. As you go, fewer measurements are given: the last levels ask you to work one out yourself before you can even start dragging.',
+      descIT: 'Trascina i due vertici mobili per costruire esattamente il triangolo rettangolo richiesto. Andando avanti le misure fornite diminuiscono: negli ultimi livelli dovrai calcolarne una da solo prima ancora di poter iniziare a trascinare.',
+      mobileDesc: 'Drag the two moving vertices to build the exact right triangle asked for. Fewer measurements are given as you go.',
+      mobileDescIT: 'Trascina i due vertici mobili per costruire il triangolo rettangolo richiesto. Le misure fornite diminuiscono man mano che avanzi.',
+      hrefKey: 'pythagoras_geometricinstinct_last', hrefBase: 'pitagora_geometricinstinct.html',
+      preview: buildMiniTriangle(),
+      modes: [
+        { name: 'Steady Hands', desc: '35 unforgiving levels, no precision gauge to help you.', descIT: '35 livelli spietati, senza barra di precisione ad aiutarti.', details: 'No time limit · no progress saved.', detailsIT: 'Nessun limite di tempo · progressi non salvati.', file: 'pitagora_steadyhands.html', hrefKey: 'pythagoras_steadyhands_last', accent: 'red', requiresSieveFinish: true, stars: 3.5 },
+        { name: 'The Theorem', desc: '50 static triangles: calculate the missing side yourself.', descIT: '50 triangoli fermi: calcola tu stesso il lato mancante.', details: 'No time limit · progress saved.', detailsIT: 'Nessun limite di tempo · progressi salvati.', file: 'pitagora_thetheorem.html', hrefKey: 'pythagoras_thetheorem_last', accent: 'orange', requiresSieveFinish: true, stars: 2.5 },
+        { name: 'Geometric Instinct', desc: '50 levels, from generous guesses to near-perfect precision.', descIT: '50 livelli, da un margine ampio a una precisione quasi perfetta.', details: 'No time limit · progress saved.', detailsIT: 'Nessun limite di tempo · progressi salvati.', file: 'pitagora_geometricinstinct.html', hrefKey: 'pythagoras_geometricinstinct_last', accent: 'yellow', stars: 3 },
+        { name: 'Triangles Everywhere', desc: 'Endless levels, precision climbing until it maxes out.', descIT: 'Livelli infiniti, precisione che sale fino al massimo.', details: 'No leaderboard · progress saved.', detailsIT: 'Nessuna classifica · progressi salvati.', file: 'pitagora_triangleseverywhere.html', hrefKey: 'pythagoras_triangleseverywhere_last', accent: 'teal', requiresSieveFinish: true, stars: 2 },
       ]
     },
   ];
@@ -2104,8 +2220,12 @@
     'November 29',
   ];
 
-  comingSoonDates.forEach((d, i) => {
-    games.push({ title: '???', desc: null, start: new Date(d), unlockLabel: unlockLabels[i], raceEnd: raceEndLabels[i+1] });
+  // il primo slot "coming soon" (1 agosto) era la promessa che ora è diventata Pitagora
+  // (games[1], sopra): non è più un segnaposto, quindi si consuma da qui in poi solo
+  // a partire dal secondo elemento di ciascun array — stesso allineamento di indici
+  // mantenuto (unlockLabels[i+1], raceEndLabels[i+2])
+  comingSoonDates.slice(1).forEach((d, i) => {
+    games.push({ title: '???', desc: null, start: new Date(d), unlockLabel: unlockLabels[i+1], raceEnd: raceEndLabels[i+2] });
   });
 
   function gameState(g){
@@ -2165,8 +2285,10 @@
   let hubEntered = false; // diventa true al click sul titolo-pulsante del gate: solo da quel momento le sequenze normalmente legate al caricamento pagina (handleEratoIntro, mini-sieve mobile, swipe del carosello mobile) possono davvero partire
   let lastMobileGameIndex = null; // null forza la prima costruzione; da lì in poi si ricostruisce solo se currentIndex cambia davvero
   const maxIndex = games.length - 1;
-  // per ora si può navigare solo fino a Game 2: niente promesse sugli altri 10 finché non vediamo come va
-  const NAV_LIMIT_INDEX = 1;
+  // Pitagora (Game 2) ora è vero: il limite si sposta di uno, per lasciare comunque
+  // visibile un solo teaser "Coming Soon" oltre l'ultimo gioco vero — niente promesse
+  // sugli altri 9 finché non vediamo come va
+  const NAV_LIMIT_INDEX = 2;
 
   let cachedEratoHeight = null;
 
@@ -2192,7 +2314,11 @@
   let cachedPodium = null;
   let cachedPrimeRushPodium = null;
   let cachedScholarsGlancePodium = null;
+  let cachedPythagorasTheTheoremPodium = null;
+  let cachedPythagorasSteadyHandsPodium = null;
   let eratoOverlayEl = null; // riferimento alla card animata (se già creata), per aggiornare la classifica quando arrivano dati freschi dal Worker
+  let pythagorasOverlayEl = null; // stesso ruolo di eratoOverlayEl qui sopra, ma per la card di Pitagora — mai lo stesso elemento
+  let pythagorasOverlayBuilt = false; // true dopo la primissima volta che si naviga su Pitagora: da lì in poi la card esiste già, va solo mostrata/riposizionata
 
   // NOTA: c'era qui una funzione (applyEratoLbMargin) che misurava via JS un margine
   // destro per allineare la classifica al bordo della card. Da quando le due metà
@@ -2216,6 +2342,21 @@
     lbHalf.innerHTML = freshHtml;
     lbHalf._realLbHtml = lbHalf.innerHTML;
     // l'allineamento a destra è statico nel CSS (margin-right:0), non serve calcolarlo
+  }
+
+  // stesso identico meccanismo di refreshEratoLeaderboard qui sopra, ma per la card
+  // di Pitagora — aggiorna la classifica dentro la card già visibile, se esiste
+  function refreshPythagorasLeaderboard(){
+    if (!pythagorasOverlayEl) return;
+    const lbHalf = pythagorasOverlayEl.querySelector('.erato-leaderboard-half');
+    if (!lbHalf) return;
+    const freshHtml = pythagorasRightHtml(games[1]);
+    if (lbHalf._isShowingRules){
+      lbHalf._realLbHtml = freshHtml;
+      return;
+    }
+    lbHalf.innerHTML = freshHtml;
+    lbHalf._realLbHtml = lbHalf.innerHTML;
   }
   const LEADERBOARD_API = 'https://eratostene.sl-eternal-lux.workers.dev';
 
@@ -2261,6 +2402,34 @@
         cachedScholarsGlancePodium = data.podium || [];
         render();
         refreshEratoLeaderboard();
+      })
+      .catch(() => {
+        // se il Worker non risponde, restano i trattini: nessun errore mostrato all'utente
+      });
+  }
+
+  // --- Pitagora: stessi identici endpoint, stessa cache/refresh, cambia solo il
+  // percorso e la card che va aggiornata ---
+  function fetchPythagorasTheTheoremLeaderboard(){
+    fetch(`${LEADERBOARD_API}/leaderboard-pythagoras-thetheorem`)
+      .then(r => r.json())
+      .then(data => {
+        cachedPythagorasTheTheoremPodium = data.podium || [];
+        render();
+        refreshPythagorasLeaderboard();
+      })
+      .catch(() => {
+        // se il Worker non risponde, restano i trattini: nessun errore mostrato all'utente
+      });
+  }
+
+  function fetchPythagorasSteadyHandsLeaderboard(){
+    fetch(`${LEADERBOARD_API}/leaderboard-pythagoras-steadyhands`)
+      .then(r => r.json())
+      .then(data => {
+        cachedPythagorasSteadyHandsPodium = data.podium || [];
+        render();
+        refreshPythagorasLeaderboard();
       })
       .catch(() => {
         // se il Worker non risponde, restano i trattini: nessun errore mostrato all'utente
@@ -2419,6 +2588,55 @@
   }
 
   // ============================================================
+  // SEZIONE: PITAGORA — stesso impianto di Eratosthenes qui sopra, ma completamente
+  // separato: nessuna di queste funzioni viene mai chiamata per games[0], e nessuna
+  // funzione di Eratosthenes viene mai chiamata per games[1].
+  // ============================================================
+  function pythagorasContentHtml(g){
+    return `
+      <div class="erato-title-row">
+        <div class="erato-gamex-label" data-en="GAME 2" data-it="GIOCO 2">GAME 2</div>
+        <h2 class="game-title-centered" data-en="${g.title}" data-it="${g.titleIT}">${g.title}</h2>
+      </div>
+      <div class="play-preview-block">
+        <button type="button" class="cta-inline cta-full-width" onclick="openModeModal(1, false)"><span data-en="Play now" data-it="Gioca ora">Play now</span></button>
+        <div class="preview-row">
+          ${g.preview || ''}
+          <div class="preview-text-col">
+            <p class="desc"><span class="desc-title" data-en="${g.descTitle}" data-it="${g.descTitleIT}">${g.descTitle}</span><span data-en="${g.desc}" data-it="${g.descIT}">${g.desc}</span></p>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function pythagorasRightHtml(g){
+    return `
+      <div class="lb-half">
+        <h2>The Theorem</h2>
+        <div class="lb-section">
+          ${podiumRowsHtml(cachedPythagorasTheTheoremPodium)}
+        </div>
+      </div>
+      <svg class="lb-divider" viewBox="0 0 356 10" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="pythagorasDividerFade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(243,239,228,0)" />
+            <stop offset="18%" stop-color="rgba(243,239,228,0.12)" />
+            <stop offset="82%" stop-color="rgba(243,239,228,0.12)" />
+            <stop offset="100%" stop-color="rgba(243,239,228,0)" />
+          </linearGradient>
+        </defs>
+        <path d="M0,5 Q89,2 178,3.5 Q267,2 356,5 Q267,8 178,6.5 Q89,8 0,5 Z" fill="url(#pythagorasDividerFade)" />
+      </svg>
+      <div class="lb-half">
+        <h2>Steady Hands</h2>
+        <div class="lb-section">
+          ${podiumRowsHtml(cachedPythagorasSteadyHandsPodium)}
+        </div>
+      </div>`;
+  }
+
+  // ============================================================
   // SEZIONE: CARD DEI GIOCHI — generazione HTML (mobile)
   // ============================================================
   function mobileNavRowHtml(){
@@ -2458,11 +2676,11 @@
       <div class="mobile-shifted-content">
         <h2 class="mobile-game-title" data-en="${g.title}" data-it="${g.titleIT}">${g.title}</h2>
         <div class="mobile-game-header">
-          <button type="button" class="mobile-game-number" onclick="openRulesModal()">${currentLang() === 'it' ? `Gioco ${number} - Regole` : `Game ${number} - Rules`}</button>
+          <button type="button" class="mobile-game-number" onclick="${number === 2 ? 'openPythagorasRulesModal()' : 'openRulesModal()'}">${currentLang() === 'it' ? `Gioco ${number} - Regole` : `Game ${number} - Rules`}</button>
           <p class="mobile-tap-hint">${currentLang() === 'it' ? `Tocca Gioco ${number} per leggere le regole.` : `Tap Game ${number} to read the rules.`}</p>
         </div>
         <div class="mobile-play-preview-block">
-          <button type="button" class="mobile-play-btn" onclick="openModeModal(0, false)"><span data-en="Play now" data-it="Gioca ora">Play now</span></button>
+          <button type="button" class="mobile-play-btn" onclick="openModeModal(${number - 1}, false)"><span data-en="Play now" data-it="Gioca ora">Play now</span></button>
           <div class="mobile-preview-block">
             ${g.preview || ''}
             <div class="mobile-desc-block">
@@ -2508,6 +2726,31 @@
       </div>`;
   }
 
+  // stessa identica struttura di mobileLeaderboardSectionHtml qui sopra, ma per
+  // Pitagora: mai la stessa funzione (quella resta cucita su Eratosthenes: titolo
+  // "The Sieve" fisso, variabili cachedPodium/cachedPrimeRushPodium/
+  // cachedScholarsGlancePodium tutte specifiche di Eratosthenes)
+  function mobilePythagorasLeaderboardSectionHtml(g){
+    const navAndDivider = mobileNavRowHtml();
+    return `
+      <div class="mobile-shifted-content">
+        ${navAndDivider}
+        <div class="mobile-lb-block">
+          <h2>The Theorem</h2>
+          <div class="lb-section">
+            ${podiumRowsHtml(cachedPythagorasTheTheoremPodium)}
+          </div>
+        </div>
+        <div class="mobile-lb-divider"></div>
+        <div class="mobile-records-block">
+          <h2>Steady Hands</h2>
+          <div class="lb-section">
+            ${podiumRowsHtml(cachedPythagorasSteadyHandsPodium)}
+          </div>
+        </div>
+      </div>`;
+  }
+
   // ============================================================
   // SEZIONE: RENDER PRINCIPALE — chiamato a ogni cambio pagina del
   // carosello, ridimensionamento, arrivo dati classifiche, ecc.
@@ -2528,7 +2771,13 @@
     positionKofiBtn();
     applyLanguage();
     centerEratoRightEdge();
-    if (gameState(g) === 'open'){
+    if (gameState(g) === 'open' && number === 1 && window.innerWidth > 900){
+      // ============================================================
+      // percorso di Eratosthenes: ESATTAMENTE identico a prima, nessuna riga
+      // toccata — solo racchiuso in "number === 1" per non essere mai raggiunto
+      // quando la pagina attiva è Pitagora
+      // ============================================================
+      if (pythagorasOverlayEl) pythagorasOverlayEl.style.display = 'none';
       // la card vera (l'overlay) vive fuori dalla griglia: se era stata nascosta
       // per una pagina diversa, la rimostro; le eventuali card "Coming Soon" vanno
       // invece nascoste, altrimenti resterebbero visibili sopra a tutto anche qui
@@ -2582,9 +2831,62 @@
         eratoOverlayEl.style.display = 'flex';
         eratoOverlayEl.style.opacity = '1';
       }
+    } else if (gameState(g) === 'open' && number === 2 && window.innerWidth > 900){
+      // ============================================================
+      // percorso di Pitagora: mai la primissima pagina caricata (currentIndex parte
+      // sempre da 0), quindi arriva qui solo tramite navigazione — niente comparsa
+      // lenta stile "primo caricamento", solo l'animazione rapida già usata per
+      // tornare su una pagina già vista, riusata identica (playCardNavAnimation è
+      // generica, non sa nulla di Eratosthenes né di Pitagora)
+      // ============================================================
+      if (eratoOverlayEl) eratoOverlayEl.style.display = 'none';
+      Object.values(comingSoonOverlays).forEach(el => { el.style.display = 'none'; });
+      const geometry = computePythagorasCardGeometry(g, number);
+      if (!pythagorasOverlayBuilt){
+        pythagorasOverlayBuilt = true;
+        pythagorasOverlayEl = buildPythagorasOverlay(g, number, geometry);
+        playCardNavAnimation(pythagorasOverlayEl, geometry.top, geometry.left, geometry.width, geometry.height, () => {
+          finalizePythagorasLayout(pythagorasOverlayEl);
+        });
+      } else if (isNavigation){
+        // stessa coreografia usata per Eratosthenes qui sopra: senza nascondere prima
+        // divisore/RULES/classifica, restano visibili per tutta la fase di restringimento
+        // dell'animazione — si vedevano "sbucare" prima che la card fosse tornata piena
+        const dividerLine = pythagorasOverlayEl.querySelector('.erato-mid-divider');
+        const gamexTag = pythagorasOverlayEl.querySelector('.erato-gamex-tag');
+        const lbHalfNav = pythagorasOverlayEl.querySelector('.erato-leaderboard-half');
+        [dividerLine, gamexTag].forEach(el => {
+          if (!el) return;
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+        });
+        if (lbHalfNav){ lbHalfNav.style.transition = 'none'; lbHalfNav.style.opacity = '0'; }
+        if (gamexTag) gamexTag.style.pointerEvents = 'none';
+        playCardNavAnimation(pythagorasOverlayEl, geometry.top, geometry.left, geometry.width, geometry.height, () => {
+          [dividerLine, gamexTag].forEach(el => {
+            if (!el) return;
+            void el.offsetWidth;
+            el.style.transition = 'opacity 1s ease';
+            el.style.opacity = '1';
+          });
+          if (gamexTag) setTimeout(() => { gamexTag.style.pointerEvents = 'auto'; }, 1000);
+          if (lbHalfNav){
+            void lbHalfNav.offsetWidth;
+            lbHalfNav.style.transition = 'opacity 500ms ease';
+            lbHalfNav.style.opacity = '1';
+          }
+        });
+      } else {
+        pythagorasOverlayEl.style.top = geometry.top + 'px';
+        pythagorasOverlayEl.style.left = geometry.left + 'px';
+        pythagorasOverlayEl.style.width = geometry.width + 'px';
+        pythagorasOverlayEl.style.height = geometry.height + 'px';
+        pythagorasOverlayEl.style.display = 'flex';
+        pythagorasOverlayEl.style.opacity = '1';
+      }
     } else {
-      // pagina diversa da Eratosthenes: la sua card (l'overlay) va nascosta, altrimenti
-      // resterebbe visibile sopra a tutto anche qui
+      // pagina diversa da Eratosthenes/Pitagora: entrambe le loro card vanno nascoste,
+      // altrimenti resterebbero visibili sopra a tutto anche qui
       if (eratoOverlayEl){
         eratoOverlayEl.style.display = 'none';
         // se la sequenza di apertura era ancora in corso (utente ha cliccato "next"
@@ -2594,6 +2896,7 @@
         eratoIntroTimeoutIds.forEach(id => clearTimeout(id));
         eratoIntroTimeoutIds.length = 0;
       }
+      if (pythagorasOverlayEl) pythagorasOverlayEl.style.display = 'none';
       showComingSoonPage(currentIndex, isNavigation);
     }
 
@@ -2627,7 +2930,7 @@
         document.querySelectorAll('.mobile-next').forEach(el => el.onclick = () => step(1));
       }
       // questa invece dipende dai dati di classifica: va sempre aggiornata
-      snapLeaderboard.innerHTML = mobileLeaderboardSectionHtml(g);
+      snapLeaderboard.innerHTML = number === 2 ? mobilePythagorasLeaderboardSectionHtml(g) : mobileLeaderboardSectionHtml(g);
 
       // ingresso/uscita dalla schermata di Eratostene su mobile: ora che il DOM sopra
       // non viene più ricostruito se currentIndex resta lo stesso, questo scatta solo
@@ -2736,6 +3039,31 @@
     // di fallback NON va in cache, altrimenti resterebbe sbagliato per sempre anche dopo
     // che handleEratoIntro la richiama a font ormai pronti
     if (fontsReadyForGeometry) cardGeometry = geometry;
+    return geometry;
+  }
+
+  // stessa identica posizione/larghezza di computeCardGeometry qui sopra (la griglia
+  // è la stessa, quindi la colonna è la stessa), ma altezza misurata sui contenuti di
+  // Pitagora — cache separata (pythagorasCardGeometry), mai la stessa di Eratosthenes:
+  // le due card hanno quasi certamente altezze diverse
+  let pythagorasCardGeometry = null;
+  function computePythagorasCardGeometry(g, number){
+    if (pythagorasCardGeometry) return pythagorasCardGeometry;
+    const grid = document.getElementById('gamesGrid');
+    const gridRect = grid.getBoundingClientRect();
+    const gridStyle = getComputedStyle(grid);
+    const gap = parseFloat(gridStyle.columnGap || gridStyle.gap) || 0;
+    const singleColWidth = (gridRect.width - gap) / 2;
+
+    const viewportCenter = window.innerWidth / 2;
+    const targetWidth = singleColWidth * 2;
+    const targetLeft = viewportCenter - singleColWidth;
+    const targetTop = gridRect.top + window.scrollY;
+
+    const targetHeight = measurePythagorasContentHeight(g, number, targetWidth);
+
+    const geometry = { top: targetTop, left: targetLeft, width: targetWidth, height: targetHeight };
+    if (fontsReadyForGeometry) pythagorasCardGeometry = geometry;
     return geometry;
   }
 
@@ -2886,6 +3214,32 @@
     return measuredHeight;
   }
 
+  // stessa identica logica di misura di measureEratoContentHeight qui sopra, ma con
+  // i contenuti di Pitagora al posto di quelli di Eratosthenes — mai la stessa
+  // funzione, per non rischiare di toccare la misura (già delicata) di Eratosthenes
+  function measurePythagorasContentHeight(g, number, totalWidth){
+    const halfWidth = totalWidth / 2;
+    const probe = document.createElement('div');
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    probe.style.pointerEvents = 'none';
+    probe.style.left = '-9999px';
+    probe.style.top = '0px';
+    probe.style.width = totalWidth + 'px';
+    probe.style.display = 'flex';
+    probe.style.flexDirection = 'row';
+    probe.innerHTML = `
+      <div class="erato-content-half" style="width:${halfWidth}px; flex-shrink:0; box-sizing:border-box; padding:0.855rem; display:flex; flex-direction:column; gap:0.475rem;">
+        ${pythagorasContentHtml(g)}
+      </div>
+      <div class="erato-leaderboard-half leaderboard-card" style="flex:1 1 auto; min-width:0; box-sizing:border-box; padding:0.855rem;">
+        ${pythagorasRightHtml(g)}
+      </div>`;
+    document.body.appendChild(probe);
+    const measuredHeight = probe.offsetHeight;
+    document.body.removeChild(probe);
+    return measuredHeight;
+  }
   // card animata: unica card esistente per Eratosthenes, costruita direttamente in JS
   // (il contenuto non vive più come markup statico da nessuna parte nella pagina).
   // Compare al centro (comparsa 0.75s), poi scorre verso la posizione bersaglio mentre
@@ -3046,6 +3400,7 @@
           <h3 data-en="Rules" data-it="Regole">Rules</h3>
           <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time." data-it="trova i 5 numeri primi nascosti nella griglia 5×5, somma i loro valori e inserisci il totale nella casella qui sotto. Una risposta corretta ti porta subito al livello successivo, quindi gioca con calma: ogni livello resta aperto per tutto il tempo che ti serve, senza alcuna penalità.">find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time.</span></p>
           <p data-en="Happy prime hunting." data-it="Buona caccia ai numeri primi.">Happy prime hunting.</p>
+          <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
           <p class="device-note-old" data-en="Progress is saved per device — switching devices restarts from level 1." data-it="I progressi sono salvati per dispositivo — cambiare dispositivo fa ripartire dal livello 1.">Progress is saved per device — switching devices restarts from level 1.</p>
         </div>`;
       // stato esplicito, mai dedotto leggendo l'HTML attuale: leggere lbHalf.innerHTML
@@ -3114,6 +3469,106 @@
     }
   }
 
+  // stessa identica logica di finalizeEratoLayout qui sopra (divisore centrale, RULES
+  // che scambia la classifica con le regole al passaggio del mouse), ma senza mascotte
+  // — Pitagora non ne ha ancora una. Mai la stessa funzione di Eratosthenes, per lo
+  // stesso motivo di sempre: non rischiare di toccare qualcosa che già funziona
+  function finalizePythagorasLayout(overlay){
+    const lbHalf = overlay.querySelector('.erato-leaderboard-half');
+    const rightPlayBtn = overlay.querySelector('.cta-full-width');
+    const firstLbRow = overlay.querySelector('.lb-row');
+    let dividerX = null;
+    if (rightPlayBtn && firstLbRow){
+      const overlayRect = overlay.getBoundingClientRect();
+      const btnRight = rightPlayBtn.getBoundingClientRect().right;
+      const rowLeft = firstLbRow.getBoundingClientRect().left;
+      dividerX = (btnRight + rowLeft) / 2 - overlayRect.left;
+
+      let dividerLine = overlay.querySelector('.erato-mid-divider');
+      if (!dividerLine){
+        dividerLine = document.createElement('div');
+        dividerLine.className = 'erato-mid-divider';
+        dividerLine.innerHTML = `
+          <svg viewBox="0 0 10 356" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="pythagorasMidDividerFade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(243,239,228,0)" />
+                <stop offset="18%" stop-color="rgba(243,239,228,0.12)" />
+                <stop offset="82%" stop-color="rgba(243,239,228,0.12)" />
+                <stop offset="100%" stop-color="rgba(243,239,228,0)" />
+              </linearGradient>
+            </defs>
+            <path d="M5,0 Q2,89 3.5,178 Q2,267 5,356 Q8,267 6.5,178 Q8,89 5,0 Z" fill="url(#pythagorasMidDividerFade)" />
+          </svg>`;
+        overlay.appendChild(dividerLine);
+      }
+      dividerLine.style.left = dividerX + 'px';
+
+      const gamexTag = overlay.querySelector('.erato-gamex-tag');
+      if (gamexTag){
+        gamexTag.style.left = dividerX + 'px';
+        gamexTag.style.top = '-2px';
+        gamexTag.style.pointerEvents = 'none';
+        void gamexTag.offsetWidth;
+        gamexTag.style.transition = 'opacity 1s ease';
+        gamexTag.style.opacity = '1';
+        setTimeout(() => { gamexTag.style.pointerEvents = 'auto'; }, 1000);
+      }
+    }
+
+    // al passaggio del mouse su RULES, la classifica sparisce per un attimo lasciando
+    // spazio al testo delle regole (lo stesso che si legge aprendo il popup); togliendo
+    // il mouse, torna la classifica
+    const rulesBtn = overlay.querySelector('#pythagorasRulesBtn');
+    if (rulesBtn && lbHalf && !rulesBtn.dataset.hoverBound){
+      rulesBtn.dataset.hoverBound = 'true';
+      const rulesPreviewHtml = `
+        <div class="erato-rules-preview">
+          <h3 data-en="Rules" data-it="Regole">Rules</h3>
+          <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="drag the two moving vertices until the triangle matches the measurements shown." data-it="trascina i due vertici mobili finché il triangolo non corrisponde alle misure indicate.">drag the two moving vertices until the triangle matches the measurements shown.</span></p>
+          <p data-en="Happy building." data-it="Buona costruzione.">Happy building.</p>
+          <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
+          <p class="device-note-old" data-en="Progress is saved per device — switching devices restarts from level 1." data-it="I progressi sono salvati per dispositivo — cambiare dispositivo fa ripartire dal livello 1.">Progress is saved per device — switching devices restarts from level 1.</p>
+        </div>`;
+      lbHalf._realLbHtml = lbHalf.innerHTML;
+      lbHalf._isShowingRules = false;
+      let swapTimer = null;
+      const fadeMs = 350;
+
+      rulesBtn.addEventListener('mouseenter', () => {
+        if (lbHalf._isShowingRules) return;
+        lbHalf._isShowingRules = true;
+        clearTimeout(swapTimer);
+        lbHalf.style.transition = `opacity ${fadeMs}ms ease`;
+        lbHalf.style.opacity = '0';
+        swapTimer = setTimeout(() => {
+          lbHalf.innerHTML = rulesPreviewHtml;
+          applyLanguage();
+          void lbHalf.offsetWidth;
+          lbHalf.style.opacity = '1';
+        }, fadeMs);
+      });
+      rulesBtn.addEventListener('mouseleave', () => {
+        if (!lbHalf._isShowingRules) return;
+        lbHalf._isShowingRules = false;
+        clearTimeout(swapTimer);
+        lbHalf.style.transition = `opacity ${fadeMs}ms ease`;
+        lbHalf.style.opacity = '0';
+        swapTimer = setTimeout(() => {
+          lbHalf.innerHTML = lbHalf._realLbHtml;
+          void lbHalf.offsetWidth;
+          lbHalf.style.opacity = '1';
+        }, fadeMs);
+      });
+    }
+
+    if (lbHalf){
+      void lbHalf.offsetWidth;
+      lbHalf.style.transition = 'opacity 500ms ease';
+      lbHalf.style.opacity = '1';
+    }
+  }
+
   // durata della comparsa iniziale (movimento verso l'alto), condivisa con qualunque
   // altra card copi questa stessa animazione al caricamento della pagina
   const CARD_INITIAL_FADE_MS = 1500;
@@ -3164,6 +3619,40 @@
         }, CARD_PAGE_CHANGE_FADE_MS);
       });
     });
+  }
+
+  // card animata di Pitagora: costruita display:none/opacity:0, mai mostrata con
+  // la sequenza di primo caricamento (quella è solo di Eratosthenes, sempre la prima
+  // pagina) — ci si arriva solo per navigazione, tramite playCardNavAnimation qui sopra
+  function buildPythagorasOverlay(g, number, geometry){
+    const overlay = document.createElement('div');
+    overlay.className = 'pythagoras-card-overlay';
+    overlay.innerHTML = `
+      <div class="erato-gamex-tag" id="pythagorasRulesBtn" data-en="RULES" data-it="REGOLE">RULES</div>
+      <div class="erato-content-half" style="width:${geometry.width / 2}px; flex-shrink:0; box-sizing:border-box; padding:0.855rem; display:flex; flex-direction:column; gap:0.475rem;">
+        ${pythagorasContentHtml(g)}
+      </div>
+      <div class="erato-leaderboard-half leaderboard-card" style="flex:1 1 auto; min-width:0; box-sizing:border-box; padding:0.855rem; opacity:0;">
+        ${pythagorasRightHtml(g)}
+      </div>`;
+    overlay.style.cssText = `
+      position: absolute;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: none;
+      flex-direction: row;
+      background: var(--bg-panel);
+      border: 1px solid rgba(232,196,104,0.85);
+      border-radius: 6px;
+      box-shadow: 0 0 0 1px rgba(232,196,104,0.55), 0 0 0 2px rgba(232,196,104,0.25);
+      animation: erato-border-cycle 14s ease-in-out infinite;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+    `;
+    document.body.appendChild(overlay);
+    applyLanguage();
+    return overlay;
   }
 
   function playEratoIntroOverlay(targetTop, targetLeft, targetWidth, targetHeight, g, number){
@@ -3648,10 +4137,14 @@
     fetchLeaderboard();
     fetchPrimeRushLeaderboard();
     fetchScholarsGlanceLeaderboard();
+    fetchPythagorasTheTheoremLeaderboard();
+    fetchPythagorasSteadyHandsLeaderboard();
   }, 3500);
   setInterval(fetchLeaderboard, 24 * 60 * 60 * 1000); // refresh una volta al giorno
   setInterval(fetchPrimeRushLeaderboard, 24 * 60 * 60 * 1000);
   setInterval(fetchScholarsGlanceLeaderboard, 24 * 60 * 60 * 1000);
+  setInterval(fetchPythagorasTheTheoremLeaderboard, 24 * 60 * 60 * 1000);
+  setInterval(fetchPythagorasSteadyHandsLeaderboard, 24 * 60 * 60 * 1000);
 
   // --- popup del regolamento ---
   // ============================================================
@@ -3663,6 +4156,15 @@
   document.getElementById('rulesCloseBtn').addEventListener('click', closeRulesModal);
   rulesModal.addEventListener('click', (e) => {
     if (e.target === rulesModal) closeRulesModal();
+  });
+
+  // stesso identico meccanismo qui sopra, ma per il popup Regole di Pitagora
+  const pythagorasRulesModal = document.getElementById('pythagorasRulesModal');
+  function openPythagorasRulesModal(){ playSound('tap'); pythagorasRulesModal.classList.add('visible'); }
+  function closePythagorasRulesModal(){ playSound('tap'); pythagorasRulesModal.classList.remove('visible'); }
+  document.getElementById('pythagorasRulesCloseBtn').addEventListener('click', closePythagorasRulesModal);
+  pythagorasRulesModal.addEventListener('click', (e) => {
+    if (e.target === pythagorasRulesModal) closePythagorasRulesModal();
   });
 
   // stesso meccanismo di apertura/chiusura qui sopra, ma per il popup informativo
@@ -3694,6 +4196,24 @@
   // --- popup di scelta modalità (The Sieve / Prime Rush / Infinite Primes) ---
   const modeModal = document.getElementById('modeModal');
   const modeOptionsEl = document.getElementById('modeOptions');
+  // 5 stelline (piene/mezze/vuote) che rappresentano la difficoltà di ciascuna modalità,
+  // valutazione personale — spiegata nei popup Regole di Eratostene e Pitagora
+  let starIdCounter = 0;
+  function renderStars(value){
+    starIdCounter++;
+    const uid = starIdCounter;
+    let stars = '';
+    for (let i = 0; i < 5; i++){
+      const diff = value - i;
+      const fillPct = diff >= 1 ? 100 : diff >= 0.5 ? 50 : 0;
+      const gradId = `starGrad_${uid}_${i}`;
+      stars += `<svg class="mode-star" viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="${gradId}"><stop offset="${fillPct}%" stop-color="var(--yellow)"/><stop offset="${fillPct}%" stop-color="rgba(243,239,228,0.18)"/></linearGradient></defs>
+        <path fill="url(#${gradId})" stroke="var(--yellow)" stroke-width="1" stroke-opacity="0.4" d="M12 2.5l2.9 6.06 6.6.79-4.9 4.5 1.28 6.55L12 17.1l-5.88 3.3 1.28-6.55-4.9-4.5 6.6-.79z"/>
+      </svg>`;
+    }
+    return `<span class="mode-star-rating" title="${value}/5">${stars}</span>`;
+  }
   function openModeModal(gameIndex, forceUnlockAll){
     playSound('tap');
     const g = games[gameIndex];
@@ -3712,7 +4232,10 @@
         return `
           <div class="mode-option mode-option-locked" style="--mode-color: var(--${m.accent})">
             <div class="mode-option-text">
-              <h4>${m.name}</h4>
+              <div class="mode-option-title-row">
+                <h4>${m.name}</h4>
+                ${renderStars(m.stars)}
+              </div>
               <p class="mode-option-details">${lockMessage}</p>
             </div>
           </div>`;
@@ -3721,7 +4244,10 @@
       return `
         <a class="mode-option" href="${href}" onclick="playSound('tap')" style="--mode-color: var(--${m.accent})">
           <div class="mode-option-text">
-            <h4>${m.name}</h4>
+            <div class="mode-option-title-row">
+              <h4>${m.name}</h4>
+              ${renderStars(m.stars)}
+            </div>
             <p>${desc}</p>
             <p class="mode-option-details">${details}</p>
           </div>
@@ -3944,10 +4470,11 @@
         else gateNote.style.display = 'none';
       }
 
-      // sblocca lo scroll (bloccato di default, vedi html.intro-gate-active) e i
-      // simboli fluttuanti di sfondo, prima nascosti insieme al resto della chrome
-      document.documentElement.classList.remove('intro-gate-active');
-      document.body.classList.remove('intro-gate-active');
+      // NOTA: lo sblocco dello scroll (rimozione di intro-gate-active) NON avviene
+      // qui — prima veniva tolto subito al click, ma l'animazione dura ancora 1.5s
+      // (mobile) o 2.5s (desktop): scrollare durante il viaggio del titolo mandava
+      // in bug il layout. Ora lo sblocco è spostato in fondo, sincronizzato con la
+      // scomparsa reale del gate (stessi setTimeout di gate.style.display='none')
       const constellation = document.querySelector('.math-constellation');
       if (constellation) constellation.style.opacity = '1';
 
@@ -4024,10 +4551,14 @@
         }, 1500);
         setTimeout(() => {
           gate.style.display = 'none';
+          document.documentElement.classList.remove('intro-gate-active');
+          document.body.classList.remove('intro-gate-active');
         }, 2500);
       } else {
         setTimeout(() => {
           gate.style.display = 'none';
+          document.documentElement.classList.remove('intro-gate-active');
+          document.body.classList.remove('intro-gate-active');
         }, 1500);
       }
     });
