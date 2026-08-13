@@ -793,6 +793,33 @@
     margin: 0 0 1rem;
   }
   .rules-modal-card p strong{ color: var(--ink); }
+  .rules-modes-title{
+    font-family:'Work Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.99rem;
+    color: var(--ink);
+    margin: 1.2rem 0 0.6rem;
+  }
+  .rules-modes-list{
+    list-style: none;
+    margin: 0 0 0.4rem;
+    padding: 0;
+  }
+  .rules-modes-list li{
+    font-family:'Work Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    line-height: 1.5;
+    margin: 0 0 0.7rem;
+  }
+  .rules-modes-list li strong{ color: var(--ink); }
+  .erato-rules-preview .rules-modes-title{ font-size: 1.1rem; margin: 0 0 0.45rem; }
+  .erato-rules-preview .rules-modes-list{ margin: 0; }
+  .erato-rules-preview .rules-modes-list li{ font-size: 0.92rem; line-height: 1.5; margin: 0 0 0.55rem; }
+  /* sulla card di Pitagora il testo arrivava già quasi a ridosso del bordo destro:
+     con la barra di scorrimento aggiunta non c'entrava più, urtava contro di lei.
+     Riduco lo spazio utilizzabile della larghezza di una barra di scorrimento tipica */
+  .pythagoras-card-overlay .erato-rules-preview{ padding-right: 16px; }
   .rules-stars-note{
     font-family:'Space Mono', monospace;
     font-size: 0.8rem;
@@ -1991,6 +2018,13 @@
     <h3><span data-en="Rules" data-it="Regole">Rules</span> <span class="accent">·</span> <span data-en="Eratosthenes" data-it="Eratostene">Eratosthenes</span></h3>
     <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time." data-it="trova i 5 numeri primi nascosti nella griglia 5×5, somma i loro valori e inserisci il totale nella casella qui sotto. Una risposta corretta ti porta subito al livello successivo, quindi gioca con calma: ogni livello resta aperto per tutto il tempo che ti serve, senza alcuna penalità.">find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time.</span></p>
     <p><em data-en="Happy prime hunting." data-it="Buona caccia ai numeri primi.">Happy prime hunting.</em></p>
+    <p class="rules-modes-title" data-en="Modes:" data-it="Modalità:">Modes:</p>
+    <ul class="rules-modes-list">
+      <li><strong>The Sieve</strong><span data-en=" — " data-it=": "> </span><span data-en="the full 100-level race, at your own pace, ranked on the main leaderboard. Time-limited, progress saved, anti-cheat active in the final levels." data-it="la gara completa di 100 livelli, al tuo ritmo, in classifica nella leaderboard principale. A tempo limitato, progressi salvati, anti-cheat attivo negli ultimi livelli.">the full 100-level race, at your own pace, ranked on the main leaderboard. Time-limited, progress saved, anti-cheat active in the final levels.</span></li>
+      <li><strong>Prime Rush</strong><span data-en=" — " data-it=": "> </span><span data-en="50 levels of pure racing against the clock. No progress saved: it's all or nothing in one sitting." data-it="50 livelli di pura corsa contro il tempo. Nessun progresso salvato: tutto o niente in un'unica sessione.">50 levels of pure racing against the clock. No progress saved: it's all or nothing in one sitting.</span></li>
+      <li><strong>Scholar's Glance</strong><span data-en=" — " data-it=": "> </span><span data-en="50 levels of total concentration: the numbers flash briefly, then vanish, and you solve from memory." data-it="50 livelli di pura concentrazione: i numeri appaiono per un attimo, poi spariscono, e risolvi a memoria.">50 levels of total concentration: the numbers flash briefly, then vanish, and you solve from memory.</span></li>
+      <li><strong>Infinite Primes</strong><span data-en=" — " data-it=": "> </span><span data-en="endless levels, no leaderboard, just you and the numbers, for as long as you want to keep going." data-it="livelli infiniti, nessuna classifica, solo tu e i numeri, per tutto il tempo che vuoi continuare.">endless levels, no leaderboard, just you and the numbers, for as long as you want to keep going.</span></li>
+    </ul>
     <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
     <img class="rules-modal-face-img" src="https://pub-312772d8d5f64507a7ad27b167cd19c4.r2.dev/eratostene_face.png" alt="">
   </div>
@@ -2002,6 +2036,13 @@
     <h3><span data-en="Rules" data-it="Regole">Rules</span> <span class="accent">·</span> Pythagoras</h3>
     <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="drag the two moving vertices until the triangle matches the measurements shown." data-it="trascina i due vertici mobili finché il triangolo non corrisponde alle misure indicate.">drag the two moving vertices until the triangle matches the measurements shown.</span></p>
     <p><em data-en="Happy building." data-it="Buona costruzione.">Happy building.</em></p>
+    <p class="rules-modes-title" data-en="Modes:" data-it="Modalità:">Modes:</p>
+    <ul class="rules-modes-list">
+      <li><strong>Geometric Instinct</strong><span data-en=" — " data-it=": "> </span><span data-en="50 levels: guess the triangle's sides freely for the first 35, then work out a missing measurement for the last 15. Precision required climbs from 80% to 99%." data-it="50 livelli: indovina liberamente i lati del triangolo per i primi 35, poi calcola una misura mancante negli ultimi 15. La precisione richiesta sale dall'80% al 99%.">50 levels: guess the triangle's sides freely for the first 35, then work out a missing measurement for the last 15. Precision required climbs from 80% to 99%.</span></li>
+      <li><strong>Triangles Everywhere</strong><span data-en=" — " data-it=": "> </span><span data-en="endless levels with every measurement given. Precision required climbs from 80% to 99% by level 50, then stays at 99% forever." data-it="livelli infiniti con tutte le misure fornite. La precisione richiesta sale dall'80% al 99% entro il livello 50, poi resta al 99% per sempre.">endless levels with every measurement given. Precision required climbs from 80% to 99% by level 50, then stays at 99% forever.</span></li>
+      <li><strong>Steady Hands</strong><span data-en=" — " data-it=": "> </span><span data-en="35 unforgiving levels, no precision bar to help you. 99% minimum from the very first level, with decimal measurements creeping in as you go." data-it="35 livelli spietati, senza barra di precisione ad aiutarti. Minimo 99% fin dal primo livello, con misure decimali che compaiono man mano che avanzi.">35 unforgiving levels, no precision bar to help you. 99% minimum from the very first level, with decimal measurements creeping in as you go.</span></li>
+      <li><strong>The Theorem</strong><span data-en=" — " data-it=": "> </span><span data-en="50 static triangles, no dragging: just calculate the missing side from the other two. Decimals start appearing after level 30, first in one measurement, then in both." data-it="50 triangoli fermi, niente trascinamento: calcola solo il lato mancante dagli altri due. I numeri decimali iniziano a comparire dopo il livello 30, prima in una misura poi in entrambe.">50 static triangles, no dragging: just calculate the missing side from the other two. Decimals start appearing after level 30, first in one measurement, then in both.</span></li>
+    </ul>
     <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
   </div>
 </div>
@@ -3400,6 +3441,13 @@
           <h3 data-en="Rules" data-it="Regole">Rules</h3>
           <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time." data-it="trova i 5 numeri primi nascosti nella griglia 5×5, somma i loro valori e inserisci il totale nella casella qui sotto. Una risposta corretta ti porta subito al livello successivo, quindi gioca con calma: ogni livello resta aperto per tutto il tempo che ti serve, senza alcuna penalità.">find the 5 hidden primes in the 5×5 grid, add up their values, and enter the total in the box below. A correct answer takes you straight to the next level, so play at your own pace: every level stays open for as long as you need, with no penalty for taking your time.</span></p>
           <p data-en="Happy prime hunting." data-it="Buona caccia ai numeri primi.">Happy prime hunting.</p>
+          <p class="rules-modes-title" data-en="Modes:" data-it="Modalità:">Modes:</p>
+          <ul class="rules-modes-list">
+            <li><strong>The Sieve</strong><span data-en=" — " data-it=": "> </span><span data-en="the full 100-level race, at your own pace, ranked on the main leaderboard. Time-limited, progress saved, anti-cheat active in the final levels." data-it="la gara completa di 100 livelli, al tuo ritmo, in classifica nella leaderboard principale. A tempo limitato, progressi salvati, anti-cheat attivo negli ultimi livelli.">the full 100-level race, at your own pace, ranked on the main leaderboard. Time-limited, progress saved, anti-cheat active in the final levels.</span></li>
+            <li><strong>Prime Rush</strong><span data-en=" — " data-it=": "> </span><span data-en="50 levels of pure racing against the clock. No progress saved: it's all or nothing in one sitting." data-it="50 livelli di pura corsa contro il tempo. Nessun progresso salvato: tutto o niente in un'unica sessione.">50 levels of pure racing against the clock. No progress saved: it's all or nothing in one sitting.</span></li>
+            <li><strong>Scholar's Glance</strong><span data-en=" — " data-it=": "> </span><span data-en="50 levels of total concentration: the numbers flash briefly, then vanish, and you solve from memory." data-it="50 livelli di pura concentrazione: i numeri appaiono per un attimo, poi spariscono, e risolvi a memoria.">50 levels of total concentration: the numbers flash briefly, then vanish, and you solve from memory.</span></li>
+            <li><strong>Infinite Primes</strong><span data-en=" — " data-it=": "> </span><span data-en="endless levels, no leaderboard, just you and the numbers, for as long as you want to keep going." data-it="livelli infiniti, nessuna classifica, solo tu e i numeri, per tutto il tempo che vuoi continuare.">endless levels, no leaderboard, just you and the numbers, for as long as you want to keep going.</span></li>
+          </ul>
           <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
           <p class="device-note-old" data-en="Progress is saved per device — switching devices restarts from level 1." data-it="I progressi sono salvati per dispositivo — cambiare dispositivo fa ripartire dal livello 1.">Progress is saved per device — switching devices restarts from level 1.</p>
         </div>`;
@@ -3527,6 +3575,13 @@
           <h3 data-en="Rules" data-it="Regole">Rules</h3>
           <p><strong data-en="How to play:" data-it="Come si gioca:">How to play:</strong> <span data-en="drag the two moving vertices until the triangle matches the measurements shown." data-it="trascina i due vertici mobili finché il triangolo non corrisponde alle misure indicate.">drag the two moving vertices until the triangle matches the measurements shown.</span></p>
           <p data-en="Happy building." data-it="Buona costruzione.">Happy building.</p>
+          <p class="rules-modes-title" data-en="Modes:" data-it="Modalità:">Modes:</p>
+          <ul class="rules-modes-list">
+            <li><strong>Geometric Instinct</strong><span data-en=" — " data-it=": "> </span><span data-en="50 levels: guess the triangle's sides freely for the first 35, then work out a missing measurement for the last 15. Precision required climbs from 80% to 99%." data-it="50 livelli: indovina liberamente i lati del triangolo per i primi 35, poi calcola una misura mancante negli ultimi 15. La precisione richiesta sale dall'80% al 99%.">50 levels: guess the triangle's sides freely for the first 35, then work out a missing measurement for the last 15. Precision required climbs from 80% to 99%.</span></li>
+            <li><strong>Triangles Everywhere</strong><span data-en=" — " data-it=": "> </span><span data-en="endless levels with every measurement given. Precision required climbs from 80% to 99% by level 50, then stays at 99% forever." data-it="livelli infiniti con tutte le misure fornite. La precisione richiesta sale dall'80% al 99% entro il livello 50, poi resta al 99% per sempre.">endless levels with every measurement given. Precision required climbs from 80% to 99% by level 50, then stays at 99% forever.</span></li>
+            <li><strong>Steady Hands</strong><span data-en=" — " data-it=": "> </span><span data-en="35 unforgiving levels, no precision bar to help you. 99% minimum from the very first level, with decimal measurements creeping in as you go." data-it="35 livelli spietati, senza barra di precisione ad aiutarti. Minimo 99% fin dal primo livello, con misure decimali che compaiono man mano che avanzi.">35 unforgiving levels, no precision bar to help you. 99% minimum from the very first level, with decimal measurements creeping in as you go.</span></li>
+            <li><strong>The Theorem</strong><span data-en=" — " data-it=": "> </span><span data-en="50 static triangles, no dragging: just calculate the missing side from the other two. Decimals start appearing after level 30, first in one measurement, then in both." data-it="50 triangoli fermi, niente trascinamento: calcola solo il lato mancante dagli altri due. I numeri decimali iniziano a comparire dopo il livello 30, prima in una misura poi in entrambe.">50 static triangles, no dragging: just calculate the missing side from the other two. Decimals start appearing after level 30, first in one measurement, then in both.</span></li>
+          </ul>
           <p class="rules-stars-note" data-en="★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest)." data-it="★ Le stelline accanto a ogni modalità nel popup di scelta indicano una mia valutazione personale della difficoltà, da mezza stella (più facile) a 5 (più difficile).">★ The stars next to each mode in the mode picker are my own difficulty rating, from half a star (easiest) to 5 (hardest).</p>
           <p class="device-note-old" data-en="Progress is saved per device — switching devices restarts from level 1." data-it="I progressi sono salvati per dispositivo — cambiare dispositivo fa ripartire dal livello 1.">Progress is saved per device — switching devices restarts from level 1.</p>
         </div>`;
